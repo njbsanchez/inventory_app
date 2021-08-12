@@ -1,6 +1,29 @@
 from flask_sqlalchemy import SQLAlchemy
-from flaskinventory import db
 import datetime
+
+db = SQLAlchemy()
+
+def connect_to_db(flask_app, dbname='inventory_psql', echo=False):  
+    
+    #organization info
+    flask_app.config['ORG_NAME'] = 'MJ'
+    flask_app.config['APP_TITLE'] = 'Sales & Inventory DB'
+    flask_app.config['APP_DESC'] = 'An extremely simple way to track the sales and inventory of cannabis products.'
+
+    #database
+    flask_app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql:///' + dbname
+    flask_app.config['SQLALCHEMY_ECHO'] = echo
+    flask_app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+    #Flask-Admin config
+    flask_app.config['DEBUG'] = True
+    flask_app.config['HOST'] = 'localhost'
+    flask_app.config['PORT'] = 8000
+    
+    db.app = flask_app
+    db.init_app(flask_app)
+    
+    print('Connected to the db!')
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # People models
@@ -9,16 +32,14 @@ import datetime
 class Staff(db.Model):
     """An staff member."""
     
-    __tablename__ = "staff"
-    
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     staff_name = db.Column(db.String(150), unique=True, nullable=False)
     role = db.Column(db.String(150), nullable=False)
     email = db.Column(db.String(255))
     phone = db.Column(db.String)
     
-    intakes = db.relationship("Intake", backref='intake')
-    sales = db.relationship("Sale", backref='sale')
+    intakes = db.relationship("Intake", backref='staff')
+    sales = db.relationship("Sale", backref='staffer')
     
     def __repr__(self):
         return f'< Staff = {self.staff_name} Role = {self.role} >'
@@ -28,8 +49,6 @@ class Staff(db.Model):
         
 class Entity(db.Model):
     """An entity."""
-    
-    __tablename__ = "entities"
     
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     contact_name = db.Column(db.String(150), unique=True, nullable=False)
@@ -64,8 +83,6 @@ def get_all_entities():
 class Product(db.Model):
     """A high-level category of product."""
     
-    __tablename__ = "products"
-    
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     product_name = db.Column(db.String(255), unique=True)
     description = db.Column(db.Text)
@@ -80,8 +97,6 @@ class Product(db.Model):
             
 class Intake(db.Model):
     """A lower-level category of product, identified by sku."""
-    
-    __tablename__ = "intake_transactions"
     
     
     date = db.Column(db.DateTime, default=datetime.datetime.now)
@@ -138,7 +153,7 @@ def get_all_skus_by_product(self, product):
 
 class Sale(db.Model):
     
-    id = db.Column(db.Integer, auto_increment=True, primary_key=True)
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     invoice_no = db.Column(db.String, nullable=False)
     date = db.Column(db.DateTime, default=datetime.datetime.now)
     prem_disc_percentage =  db.Column(db.Integer, nullable=False)
@@ -167,30 +182,30 @@ class Sale(db.Model):
 class Item(db.Model):
     
     #Item info
-    id = db.Column(db.Integer, auto_increment=True, primary_key=True)
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     sku = db.Column(db.String(), db.ForeignKey(Intake.sku))
     quantity = db.Column(db.Integer(), nullable = False)
 
     #REF: Sale Info
     sale_id = db.Column(db.Integer(), db.ForeignKey(Sale.id))
 
-class Sample(db.Model):
-    """TO DO"""
+# class Sample(db.Model):
+#     """TO DO"""
     
-    id = db.Column(db.Integer, auto_increment=True, primary_key=True)
-    invoice_no = db.Column(db.String, nullable=False)
-    date = db.Column(db.DateTime, default=datetime.datetime.now)
-    prem_disc_percentage =  db.Column(db.Integer, nullable=False)
-    wiring_fee = db.Column(db.Float(10), nullable=False)
+#     id = db.Column(db.Integer, auto_increment=True, primary_key=True)
+#     invoice_no = db.Column(db.String, nullable=False)
+#     date = db.Column(db.DateTime, default=datetime.datetime.now)
+#     prem_disc_percentage =  db.Column(db.Integer, nullable=False)
+#     wiring_fee = db.Column(db.Float(10), nullable=False)
     
-    #REF: Customer Info
-    entity_id = db.Column(db.Integer(), db.ForeignKey(Entity.id))
+#     #REF: Customer Info
+#     entity_id = db.Column(db.Integer(), db.ForeignKey(Entity.id))
     
-    #REF: Staff Info
-    seller_name = db.Column(db.String(), db.ForeignKey(Staff.staff_name))
-    broker_fee = db.Column(db.Float(10), nullable=False)
+#     #REF: Staff Info
+#     seller_name = db.Column(db.String(), db.ForeignKey(Staff.staff_name))
+#     broker_fee = db.Column(db.Float(10), nullable=False)
     
-    items = db.relationship("Item", backref='sale')
+#     items = db.relationship("Item", backref='sale')
 
 def get_sale_by_id(id):
     """Return sale with given ID."""
@@ -218,10 +233,11 @@ def get_sales_from_date(date):
     return Sale.query.filter(Sale.date==date).all().order_by("date")
 
 
-
-
-
-            
-            
+if __name__ == '__main__':
+    from app import app
+    
+    connect_to_db(app)
+    db.create_all()
+    db.session.commit()
             
             

@@ -1,8 +1,17 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, FieldList, FloatField, TelField, EmailField, FormField, IntegerField, SelectField, SubmitField, TextField, DatetimeField
+from wtforms import StringField, FieldList, FloatField, FormField, DateField, IntegerField, SelectField, SubmitField, TextField
+from wtforms.fields.html5 import TelField, EmailField
 from wtforms.validators import DataRequired, NumberRange, Length
 
 class addstaff(FlaskForm):
+    staff_name = StringField('Staff Name', validators=[DataRequired()])
+    role = SelectField(u'Role', choices=[('broker', 'broker'), ('staff', 'staff')])
+    email = EmailField('Email')
+    phone = TelField('Telephone Number')
+    notes = TextField('Notes')
+    staffsubmit = SubmitField('Save Changes')
+
+class editstaff(FlaskForm):
     staff_name = StringField('Staff Name', validators=[DataRequired()])
     role = SelectField(u'Role', choices=[('broker', 'broker'), ('staff', 'staff')])
     email = EmailField('Email')
@@ -25,7 +34,7 @@ class addproduct(FlaskForm):
 
 class addintake(FlaskForm):
     
-    datetime = DatetimeField('Intake Date', format='%Y-%m-%d %H:%M:%S')
+    date = DateField('Intake Date', format='%Y-%m-%d')
     
     # Selling Info
     product_id = SelectField('Product Category', choices=[], coerce=int, validators=[DataRequired()]) #https://stackoverflow.com/questions/12850605/how-do-i-generate-dynamic-fields-in-wtforms/18324514
@@ -47,7 +56,7 @@ class additem(FlaskForm):
 
 class addsale(FlaskForm):
     invoice_no = StringField('Invoice Number', validators=[DataRequired()])
-    datetime = DatetimeField('Intake Date', format='%Y-%m-%d %H:%M:%S')
+    date = DateField('Intake Date', format='%Y-%m-%d')
     prem_disc = FloatField('Licensing Fee')
     wiring_fee = FloatField('Licensing Fee')
     
@@ -63,7 +72,7 @@ class addsale(FlaskForm):
 
 class recordsample(FlaskForm):
     invoice_no = StringField('Invoice Number', validators=[DataRequired()])
-    datetime = DatetimeField('Intake Date', format='%Y-%m-%d %H:%M:%S')
+    date = DateField('Intake Date', format='%Y-%m-%d')
     
     entity = SelectField('Customer', choices=[], coerce=int, validate_choice=True)
     
