@@ -1,0 +1,107 @@
+{% macro edit_field(field,catch_kwargs=true) %}
+<div class="control-group{% if field.errors  %} error {% endif %}">
+    {{  field.label(class="control-label") }}
+<div class="controls">
+    {{  field(**kwargs)  }}
+    {% for error in field.errors %}
+    <span class="help-inline">{{error}}</span>
+    {% endfor %}
+</div>
+</div>
+{% endmacro %}
+
+
+coolFeature
+(Task 4 of 4)
+0:30:21
+Codewriting
+
+You are developing a new programming language. You believe that ordinary dictionaries are boring, so you've decided to add a cool feature to make your language unique!
+
+You want the cool feature to be able to perform two types of queries. With two integer arrays, a and b, the two types of queries are as follows:
+
+If the query is of the form [0, i, x], then b[i] should be assigned the value of x.
+If the query is of the form [1, x], then find the total number of pairs of indices i and j such that a[i] + b[j] = x.
+You will be given the arrays of integers a and b, as well as queries, an array of queries in either of the forms described above. Your task is to implement this cool feature, perform the given queries and return an array of the results of the queries of the type [1, x].
+
+Example
+
+For a = [1, 2, 3], b = [3, 4], and queries = [[1, 5], [0, 0, 1], [1, 5]], the output should be coolFeature(a, b, queries) = [2, 1].
+
+The arrays look like this initially:
+a = [1, 2, 3] and b = [3, 4]
+
+For the query [1, 5], there are two ways to form a sum of 5 using an element from each array: 5 = 1 + 4 = a[0] + b[1] and 5 = 2 + 3 = a[1] + b[0]. So the result is 2.
+
+The query [0, 0, 1] re-assigns the value of b[0] to 1, so the arrays now look like this:
+a = [1, 2, 3] and b = [1, 4]
+
+For the final query [1, 5], there's now only one way to form a sum of 5 using an element from each array: 5 = 1 + 4 = a[0] + b[1]. So the result is 1.
+
+Since the two queries of type [1, x] gave results of 2 and 1 respectively, the answer is [2, 1].
+
+For a = [1, 2, 2], b = [2, 3], and queries = [[1, 4], [0, 0, 3], [1, 5]], the output should be coolFeature(a, b, queries) = [3, 4].
+
+The arrays look like this initially:
+a = [1, 2, 2] and b = [2, 3]
+
+For the query [1, 4], there are three ways to form a sum of 4 using an element from each array: 4 = 1 + 3 = a[0] + b[1], 4 = 2 + 2 = a[1] + b[0], and 4 = 2 + 2 = a[2] + b[0]. So the result is 3.
+
+The query [0, 0, 3] re-assigns the value of b[0] to 3, so the arrays now look like this:
+a = [1, 2, 2] and b = [3, 3]
+
+For the final query [1, 5], there are now 4 ways to form a sum of 5 using an element from each array: 5 = 2 + 3 = a[1] + b[0], 5 = 2 + 3 = a[1] + b[1], 5 = 2 + 3 = a[2] + b[0], and 5 = 2 + 3 = a[2] + b[1]. So the result is 4.
+
+Since the two queries of type [1, x] gave results of 3 and 4 respectively, the answer is [3, 4].
+
+Input/Output
+
+[execution time limit] 4 seconds (py3)
+
+[input] array.integer a
+
+An array of integers.
+
+Guaranteed constraints:
+1 ≤ a.length ≤ 103,
+0 ≤ a[i] ≤ 109.
+
+[input] array.integer b
+
+An array of integers.
+
+Guaranteed constraints:
+1 ≤ b.length ≤ 5 · 104,
+0 ≤ b[i] ≤ 109.
+
+[input] array.array.integer queries
+
+An array of queries, where queries[i][0] represents the type of query, and the other elements represent the parameters of the query (i and x for type 0, and just x for type 1).
+
+For queries of the type [0, i, x], it is guaranteed that 0 ≤ i < b.length and 0 ≤ x ≤ 109.
+For queries of the type [1, x], it is guaranteed that 0 ≤ x ≤ 2 · 109.
+
+Guaranteed constraints:
+1 ≤ queries.length ≤ 103.
+
+[output] array.integer
+
+The outputs of the queries of the type [1, x], in the order they are given in the input.
+
+[Python 3] Syntax Tips
+
+# Prints help message to the console
+# Returns a string
+def helloWorld(name):
+    print("This prints to the console when you Run Tests")
+    return "Hello, " + name
+
+123
+def coolFeature(a, b, queries):
+
+
+TESTS
+CUSTOM TESTS
+MORE
+0/300
+array
