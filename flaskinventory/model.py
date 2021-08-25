@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from flask_bootstrap import Bootstrap
 import datetime
 
 db = SQLAlchemy()
@@ -28,12 +29,18 @@ def connect_to_db(flask_app, dbname='inventory_psql', echo=False):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # People models
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+    
 class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     username = db.Column(db.String(15), unique=True)
     email = db.Column(db.String(50), unique=True)
     password = db.Column(db.String(80), unique=True)
+    
+    def __repr__(self):
+        return f'< ID = {self.id} User = {self.username} >'
+
+    def __init__(self, username, email, password):
+        self.username, self.email, self.password = (username, email, password)
 
 class Staff(db.Model):
     """An staff member."""
@@ -41,7 +48,7 @@ class Staff(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     staff_name = db.Column(db.String(150), unique=True, nullable=False)
     role = db.Column(db.String(150), nullable=False)
-    email = db.Column(db.String(255))
+    email = db.Column(db.String(255), unique=True, nullable=False)
     phone = db.Column(db.String)
     
     intakes = db.relationship("Intake", backref='staff')
@@ -51,7 +58,7 @@ class Staff(db.Model):
         return f'< Staff = {self.staff_name} Role = {self.role} >'
 
     def __init__(self, staff_name, role="staff", email=None, phone=None, notes="N/A"):
-        self.contact_name, self.notes, self.email, self.phone = (staff_name, notes, email, phone)
+        self.staff_name, self.role, self.notes, self.email, self.phone = (staff_name, role, notes, email, phone)
         
 class Entity(db.Model):
     """An entity."""
@@ -59,6 +66,7 @@ class Entity(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     contact_name = db.Column(db.String(150), unique=True, nullable=False)
     company_name = db.Column(db.String(150), nullable=False)
+    entity_type = db.Column(db.String(150), nullable=False)
     email = db.Column(db.String(255))
     phone = db.Column(db.String)
     notes = db.Column(db.Text)
@@ -67,10 +75,10 @@ class Entity(db.Model):
     customer = db.relationship("Sale", backref='entity')
     
     def __repr__(self):
-        return f'< Contact = {self.countact_name} Company = {self.company_name} >'
+        return f'< Contact = {self.contact_name} Company = {self.company_name} >'
 
-    def __init__(self, contact_name, company_name=None, email=None, phone=None, notes="N/A",):
-        self.contact_name, self.notes, self.email, self.phone = (contact_name, notes, email, phone)
+    def __init__(self, contact_name, company_name=None, entity_type="MJ", email=None, phone=None, notes="N/A",):
+        self.contact_name, self.company_name, self.entity_type, self.notes, self.email, self.phone = (contact_name, company_name, entity_type, notes, email, phone)
         if company_name == None:
             self.company_name = contact_name
 
@@ -243,6 +251,7 @@ if __name__ == '__main__':
     from app import app
     
     connect_to_db(app)
+    Bootstrap(app)
     db.create_all()
     db.session.commit()
             

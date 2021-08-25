@@ -1,44 +1,46 @@
-from flask_wtf import FlaskForm, Form
-from wtforms import form, StringField, FieldList, FloatField, FormField, BooleanField, DateField, IntegerField, SelectField, SubmitField, TextField
+
+from flask_wtf import FlaskForm
+from wtforms import StringField, FieldList, FloatField, FormField, BooleanField, DateField, IntegerField, SelectField, SubmitField, TextField, validators
 from wtforms.fields.html5 import TelField, EmailField
-from wtforms.validators import InputRequired, NumberRange, Length, Email
+# from wtforms.validators import DataRequired, NumberRange, Length, Email, validators
+from flask_bootstrap import Bootstrap
 
 class LoginForm(FlaskForm):
-    username = StringField('Username', validators=[InputRequired(), Length(min=4, max=20)])
-    password = StringField('Password', validators=[InputRequired(), Length(min=8, max=80)])
+    username = StringField('Username', [validators.DataRequired(), validators.Length(min=4, max=20)])
+    password = StringField('Password', [validators.DataRequired(),validators.Length(min=8, max=80)])
     remember = BooleanField('Remember me')
     
 class RegisterForm(FlaskForm):
-    email = StringField('Email', validators=[InputRequired(), Email(message="Invalid Email")])
-    username = StringField('Username', validators=[InputRequired(), Length(min=4, max=20)])
-    password = StringField('Password', validators=[InputRequired(), Length(min=8, max=80)]) 
+    email = StringField('Email', [validators.DataRequired(), validators.Email(message="Invalid Email")])
+    username = StringField('Username', [validators.DataRequired(),validators.Length(min=4, max=20)])
+    password = StringField('Password', [validators.DataRequired(),validators.Length(min=8, max=80)]) 
 
 class AddStaff(FlaskForm):
-    staff_name = StringField('Staff Name', validators=[InputRequired()])
-    role = SelectField(u'Role', choices=[('broker', 'broker'), ('staff', 'staff')])
+    staff_name = StringField('Name', [validators.DataRequired()])
+    role = StringField('Role (broker or staff)',[validators.DataRequired()])
     email = EmailField('Email')
     phone = TelField('Telephone Number')
     notes = TextField('Notes')
     staffsubmit = SubmitField('Save Changes')
 
 class editstaff(FlaskForm):
-    staff_name = StringField('Staff Name', validators=[InputRequired()])
-    role = SelectField(u'Role', choices=[('broker', 'broker'), ('staff', 'staff')])
+    staff_name = StringField('Staff Name', [validators.DataRequired()])
+    role = StringField('role')
     email = EmailField('Email')
     phone = TelField('Telephone Number')
     staffsubmit = SubmitField('Save Changes')
 
-class addentity(FlaskForm):
-    contact_name = StringField('Staff Name', validators=[InputRequired()])
-    company_name = StringField('Company Name', validators=[InputRequired()])
-    entity_type = SelectField(u'Entity Type', choices=[('OTH', 'OTH'), ('Wholesale', 'Wholesale'), ('MJ', 'MJ')])
+class AddEntity(FlaskForm):
+    contact_name = StringField('Entity Name', [validators.DataRequired()])
+    company_name = StringField('Company Name', [validators.DataRequired()])
+    entity_type = StringField('Entity Type: (OTH, Wholesale, MJ)',[validators.DataRequired()])
     email = EmailField('Email')
     phone = TelField('Telephone Number')
     notes = TextField('Notes')
     staffsubmit = SubmitField('Save Changes')
 
 class addproduct(FlaskForm):
-    prodname = StringField('Product Name', validators=[InputRequired()])
+    prodname = StringField('Product Name', [validators.DataRequired()])
     prod_desc = TextField('Notes')
     prodsubmit = SubmitField('Save Changes')
 
@@ -47,25 +49,25 @@ class addintake(FlaskForm):
     date = DateField('Intake Date', format='%Y-%m-%d')
     
     # Selling Info
-    product_id = SelectField('Product Category', choices=[], coerce=int, validators=[InputRequired()]) #https://stackoverflow.com/questions/12850605/how-do-i-generate-dynamic-fields-in-wtforms/18324514
-    sku = StringField('SKU', validators=[InputRequired()])
-    selling_price = FloatField('Selling Price per Unit', validators=[InputRequired()])
+    product_id = SelectField('Product Category', choices=[], coerce=int) #https://stackoverflow.com/questions/12850605/how-do-i-generate-dynamic-fields-in-wtforms/18324514
+    sku = StringField('SKU', [validators.DataRequired()])
+    selling_price = FloatField('Selling Price per Unit', [validators.DataRequired()])
     notes = TextField('Notes')
     
     #Purchase Info
-    init_unitcount = IntegerField('Intake Amount', validators=[NumberRange(min=5, max=1000000),InputRequired()])
-    cost_perunit = FloatField('$ Cost per Unit', validators=[InputRequired()])
-    licensingfee = FloatField('Licensing Fee', validators=[InputRequired()])
+    init_unitcount = IntegerField('Intake Amount', [validators.NumberRange(min=5, max=1000000), validators.DataRequired()])
+    cost_perunit = FloatField('$ Cost per Unit', [validators.DataRequired()])
+    licensingfee = FloatField('Licensing Fee', [validators.DataRequired()])
     supplier = SelectField('Supplier', choices=[], coerce=int, validate_choice=True) #https://stackoverflow.com/questions/12850605/how-do-i-generate-dynamic-fields-in-wtforms/18324514
     intake_staff = SelectField('Intake Staff', choices=[], coerce=int, validate_choice=True) #https://stackoverflow.com/questions/12850605/how-do-i-generate-dynamic-fields-in-wtforms/18324514
     prodsubmit = SubmitField('Save Intake')
 
 class additem(FlaskForm):
     sku = SelectField('Supplier', choices=[], coerce=int, validate_choice=True)
-    quantity = IntegerField('Quantity', validators=[NumberRange(min=5, max=1000000),InputRequired()])
+    quantity = IntegerField('Quantity', [validators.NumberRange(min=5, max=1000000),validators.DataRequired()])
 
 class addsale(FlaskForm):
-    invoice_no = StringField('Invoice Number', validators=[InputRequired()])
+    invoice_no = StringField('Invoice Number', [validators.DataRequired()])
     date = DateField('Intake Date', format='%Y-%m-%d')
     prem_disc = FloatField('Licensing Fee')
     wiring_fee = FloatField('Licensing Fee')
@@ -81,7 +83,7 @@ class addsale(FlaskForm):
 
 
 class recordsample(FlaskForm):
-    invoice_no = StringField('Invoice Number', validators=[InputRequired()])
+    invoice_no = StringField('Invoice Number', [validators.DataRequired()])
     date = DateField('Intake Date', format='%Y-%m-%d')
     
     entity = SelectField('Customer', choices=[], coerce=int, validate_choice=True)

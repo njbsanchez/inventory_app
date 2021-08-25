@@ -7,17 +7,17 @@
 	</style>
 {% endblock %}
 
-{% block title %} Staff Management {% endblock %}
+{% block title %} Entity Management {% endblock %}
 
 {% block body %}
 
 <div class="container">
 
-	<h1>Staff</h1>
+	<h1>Entity</h1>
 	<div >
-		<h3 style="display: inline-block;margin:0;"> Add staff members.</h3>
+		<h3 style="display: inline-block;margin:0;"> Add entities.</h3>
 		<button type="button" class="btn btn-add" data-toggle="modal" data-target="#exampleModal">
-		<span class="btn-icon-add"><i class="glyphicon glyphicon-plus"></i></span>Add Staff</button>
+		<span class="btn-icon-add"><i class="glyphicon glyphicon-plus"></i></span>Add Entity</button>
 	</div>
 
 	<!-- add Modal code here-->
@@ -25,7 +25,7 @@
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h3 class="modal-title" id="exampleModalLabel">Add Staff</h3>
+					<h3 class="modal-title" id="exampleModalLabel">Add Entity</h3>
 					<button
 						type="button"
 						class="close"
@@ -35,13 +35,14 @@
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
-				<form class="form-addstaff form form-horizontal" method="post" role="form">
+				<form class="form-addentity form form-horizontal" method="post" role="form">
 					<div>
-					<h2 class="form-addstaff-heading">Add Staff</h2>
+					<h2 class="form-addEntity-heading">Add Entity</h2>
 					{{ form.hidden_tag() }}
 					{{ wtf.form_errors(form, hiddens="only") }}
-					{{ wtf.form_field(form.staff_name) }}
-					{{ wtf.form_field(form.role) }}
+					{{ wtf.form_field(form.contact_name) }}
+					{{ wtf.form_field(form.company_name) }}
+					{{ wtf.form_field(form.entity_type) }}
 					{{ wtf.form_field(form.email) }}
 					{{ wtf.form_field(form.phone) }}
 					{{ wtf.form_field(form.notes) }}
@@ -60,20 +61,23 @@
 		<thead>
 			<tr>
 				<th>ID</th>
-				<th>Name</th>
-				<th>Role</th>
+				<th>Contact Name</th>
+				<th>Company Name</th>
 				<th>Email</th>
 				<th>Phone Number</th>
+				<th>Notes</th>
 			</tr>
 		</thead>
 		<tbody>
 			{% for p in details %}
 			<tr>
 				<td>{{p.id}}</td>
-				<td>{{p.staff_name}}</td>
-				<td>{{p.role}}</td>
+				<td>{{p.contact_name}}</td>
+				<td>{{p.contact_name}}</td>
+				<td>{{p.entity_type}}</td>
 				<td>{{p.email}}</td>
 				<td>{{p.phone}}</td>
+				<td>{{p.notes}}</td>
 				<td>
 					<button
 						type="button"
@@ -83,7 +87,7 @@
 					>
 						<span class="btn-icon"
 							><i class="glyphicon glyphicon-pencil"></i></span
-						>Edit
+						>Edit (Coming Soon)
 					</button>
 				</td>
 			</tr>

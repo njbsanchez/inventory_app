@@ -6,17 +6,17 @@
 	</style>
 {% endblock %}
 
-{% block title %} Staff Management {% endblock %}
+{% block title %} Intake Tracker {% endblock %}
 
 {% block body %}
 
 <div class="container">
 
-	<h1>Staff</h1>
+	<h1>Intake</h1>
 	<div >
-		<h3 style="display: inline-block;margin:0;"> Add staff members.</h3>
+		<h3 style="display: inline-block;margin:0;"> Add Intake.</h3>
 		<button type="button" class="btn btn-add" data-toggle="modal" data-target="#exampleModal">
-		<span class="btn-icon-add"><i class="glyphicon glyphicon-plus"></i></span>Add Staff</button>
+		<span class="btn-icon-add"><i class="glyphicon glyphicon-plus"></i></span>Add Intake</button>
 	</div>
 
 	<!-- add Modal code here-->
@@ -24,7 +24,7 @@
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h3 class="modal-title" id="exampleModalLabel">Add Staff</h3>
+					<h3 class="modal-title" id="exampleModalLabel">Add Intake</h3>
 					<button
 						type="button"
 						class="close"
@@ -34,17 +34,17 @@
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
-				<form action="" method="post">
-					{{ form.csrf_token() }}
-					{{ form.staff_name.label(class="form-control-label") }}<br />
-					{{ form.staff_name(class="form-control form-control-lg") }} 
-					{{ form.role.label(class="form-control-label") }}<br />
-					{{ form.role(class="form-control form-control-lg") }} 
-					{{ form.email.label(class="form-control-label") }}<br />
-					{{ form.email(class="form-control form-control-lg") }} 
-					{{ form.phone.label(class="form-control-label") }}<br />
-					{{ form.phone(class="form-control form-control-lg") }}
-				</div>
+				<form class="form-addstaff form form-horizontal" method="post" role="form">
+					<div>
+					<h2 class="form-addstaff-heading">Add Intake</h2>
+					{{ form.hidden_tag() }}
+					{{ wtf.form_errors(form, hiddens="only") }}
+					{{ wtf.form_field(form.staff_name) }}
+					{{ wtf.form_field(form.role) }}
+					{{ wtf.form_field(form.email) }}
+					{{ wtf.form_field(form.phone) }}
+					{{ wtf.form_field(form.notes) }}
+					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 						<div>{{ form.staffsubmit(class="btn btn-primary") }}</div>
