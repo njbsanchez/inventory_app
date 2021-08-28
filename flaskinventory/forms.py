@@ -49,7 +49,7 @@ class addintake(FlaskForm):
     date = DateField('Intake Date', format='%Y-%m-%d')
     
     # Selling Info
-    product_id = SelectField('Product Category', choices=[], coerce=int) #https://stackoverflow.com/questions/12850605/how-do-i-generate-dynamic-fields-in-wtforms/18324514
+    product_id = SelectField('Product Category', choices=[]) #https://stackoverflow.com/questions/12850605/how-do-i-generate-dynamic-fields-in-wtforms/18324514
     sku = StringField('SKU', [validators.DataRequired()])
     selling_price = FloatField('Selling Price per Unit', [validators.DataRequired()])
     notes = TextField('Notes')
@@ -62,35 +62,35 @@ class addintake(FlaskForm):
     intake_staff = SelectField('Intake Staff', choices=[], coerce=int, validate_choice=True) #https://stackoverflow.com/questions/12850605/how-do-i-generate-dynamic-fields-in-wtforms/18324514
     prodsubmit = SubmitField('Save Intake')
 
-class additem(FlaskForm):
-    sku = SelectField('Supplier', choices=[], coerce=int, validate_choice=True)
-    quantity = IntegerField('Quantity', [validators.NumberRange(min=5, max=1000000),validators.DataRequired()])
+# class additem(FlaskForm):
+#     sku = SelectField('Supplier', choices=[], coerce=int, validate_choice=True)
+#     quantity = IntegerField('Quantity', [validators.NumberRange(min=5, max=1000000),validators.DataRequired()])
 
-class addsale(FlaskForm):
-    invoice_no = StringField('Invoice Number', [validators.DataRequired()])
-    date = DateField('Intake Date', format='%Y-%m-%d')
-    prem_disc = FloatField('Licensing Fee')
-    wiring_fee = FloatField('Licensing Fee')
+# class addsale(FlaskForm):
+#     invoice_no = StringField('Invoice Number', [validators.DataRequired()])
+#     date = DateField('Intake Date', format='%Y-%m-%d')
+#     prem_disc = FloatField('Licensing Fee')
+#     wiring_fee = FloatField('Licensing Fee')
     
-    entity = SelectField('Customer', choices=[], coerce=int, validate_choice=True)
+#     entity = SelectField('Customer', choices=[], coerce=int, validate_choice=True)
     
-    seller_staff = SelectField('Seller/Staff', choices=[], coerce=int, validate_choice=True)
-    broker_fee = FloatField('Broker Fee')
+#     seller_staff = SelectField('Seller/Staff', choices=[], coerce=int, validate_choice=True)
+#     broker_fee = FloatField('Broker Fee')
     
-    sale_items = FieldList(FormField(additem), min_entries=1) #https://stackoverflow.com/questions/30121763/how-to-use-a-wtforms-fieldlist-of-formfields
+#     sale_items = FieldList(FormField(additem), min_entries=1) #https://stackoverflow.com/questions/30121763/how-to-use-a-wtforms-fieldlist-of-formfields
     
-    salesubmit = SubmitField('Save Sale')
+#     salesubmit = SubmitField('Save Sale')
 
 
-class recordsample(FlaskForm):
-    invoice_no = StringField('Invoice Number', [validators.DataRequired()])
-    date = DateField('Intake Date', format='%Y-%m-%d')
+# class recordsample(FlaskForm):
+#     invoice_no = StringField('Invoice Number', [validators.DataRequired()])
+#     date = DateField('Intake Date', format='%Y-%m-%d')
     
-    entity = SelectField('Customer', choices=[], coerce=int, validate_choice=True)
+#     entity = SelectField('Customer', choices=[], coerce=int, validate_choice=True)
     
-    movement = SelectField(u'Sample Check Out or Sample Return?', choices=[('return', 'return'), ('checked-out', 'checked-out')])
-    seller_staff = SelectField('Seller/Staff', choices=[], coerce=int, validate_choice=True)
+#     movement = SelectField(u'Sample Check Out or Sample Return?', choices=[('return', 'return'), ('checked-out', 'checked-out')])
+#     seller_staff = SelectField('Seller/Staff', choices=[], coerce=int, validate_choice=True)
     
-    sample_items = FieldList(FormField(additem), min_entries=1) #https://stackoverflow.com/questions/30121763/how-to-use-a-wtforms-fieldlist-of-formfields
+#     sample_items = FieldList(FormField(additem), min_entries=1) #https://stackoverflow.com/questions/30121763/how-to-use-a-wtforms-fieldlist-of-formfields
     
-    salesubmit = SubmitField('Save Sale')
+#     salesubmit = SubmitField('Save Sale')

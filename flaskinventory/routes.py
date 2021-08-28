@@ -50,11 +50,14 @@ def coming_soon():
     return render_template("coming_soon.html")
 
 
-@app.route("/intake", methods = ['GET', 'POST'])
-def show_intake():
+@app.route("/product", methods = ['GET', 'POST'])
+def show_product():
     """list staff/add staff."""
     p_form = addproduct(csrf_enabled=True)
     i_form = addintake(csrf_enabled=True)
+    
+    i_form.product.choices = [(product.id, product.product_name) for product in Product.query.all()]
+    
     p_details = Product.query.all()
     i_details = Intake.query.all()
     p_exists = bool(Product.query.all())
@@ -103,12 +106,74 @@ def show_intake():
             flash(f'This productalready exists.', 'danger')
             return redirect('/staff')
         
-    return render_template("staff.html", i_details=i_details, p_details=p_details, form=form)
+    return render_template("staff.html", i_details=i_details, p_details=p_details, p_form=p_form, i_form=i_form)
+
+
+@app.route("/intake", methods = ['GET', 'POST'])
+def show_intake():
+    """list staff/add staff."""
+    p_form = addproduct(csrf_enabled=True)
+    i_form = addintake(csrf_enabled=True)
+    
+    i_form.product.choices = [(product.id, product.product_name) for product in Product.query.all()]
+    
+    p_details = Product.query.all()
+    i_details = Intake.query.all()
+    p_exists = bool(Product.query.all())
+    i_exists = bool(Intake.query.all())
+    
+    if p_exists == False and request.method == 'GET':
+        flash(f'Add product to view', 'info')
+    
+    if i_exists == False and request.method == 'GET':
+        flash(f'Add intake to view', 'info')
+        
+    if p_form.validate_on_submit():
+        
+        prodname = p_form.prodname.data
+        prod_desc = p_form.prod_desc.data
+    
+        new_prod = Product(product_name=prodname, description=prod_desc)
+        db.session.add(new_prod)
+        
+        try:
+            db.session.commit()
+            print('added!')
+            flash(f'{p_form.prodname} has been added!','success')
+            return redirect(url_for('staff'))
+        except sq.IntegrityError:
+            db.session.rollback()
+            flash(f'This product already exists.', 'danger')
+            return redirect('/staff')
+        
+    if i_form.validate_on_submit():
+        
+        prod_categories = [(p.id, p.product_name) for p in Product.query.all()]
+        prodname = p_form.prodname.data
+        prod_desc = p_form.prod_desc.data
+    
+        new_prod = Product(prodname, prod_desc)
+        db.session.add(new_prod)
+        
+        try:
+            db.session.commit()
+            print('added!')
+            flash(f'{p_form.prodname} has been added!','success')
+            return redirect(url_for('staff'))
+        except sq.IntegrityError:
+            db.session.rollback()
+            flash(f'This productalready exists.', 'danger')
+            return redirect('/staff')
+        
+    return render_template("staff.html", i_details=i_details, p_details=p_details, p_form=p_form, i_form=i_form)
 
 @app.route("/staff/", methods = ['GET', 'POST'])
 def show_staff():
     """list staff/add staff."""
     form = AddStaff()
+    
+    form 
+    
     details = Staff.query.all()
     exists = bool(Staff.query.all())
     # exists = bool(Staff.query.all())

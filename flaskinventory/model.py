@@ -57,7 +57,7 @@ class Staff(db.Model):
     def __repr__(self):
         return f'< Staff = {self.staff_name} Role = {self.role} >'
 
-    def __init__(self, staff_name, role="staff", email=None, phone=None, notes="N/A"):
+    def __init__(self, staff_name, role="staff", email=None, phone=None):
         self.staff_name, self.role, self.notes, self.email, self.phone = (staff_name, role, notes, email, phone)
         
 class Entity(db.Model):
