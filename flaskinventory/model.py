@@ -50,6 +50,7 @@ class Staff(db.Model):
     role = db.Column(db.String(150), nullable=False)
     email = db.Column(db.String(255), unique=True, nullable=False)
     phone = db.Column(db.String)
+    notes = db.Column(db.Text)
     
     intakes = db.relationship("Intake", backref='staff')
     sales = db.relationship("Sale", backref='staffer')
@@ -57,7 +58,7 @@ class Staff(db.Model):
     def __repr__(self):
         return f'< Staff = {self.staff_name} Role = {self.role} >'
 
-    def __init__(self, staff_name, role="staff", email=None, phone=None):
+    def __init__(self, staff_name, role="staff", email=None, phone=None, notes="N/A"):
         self.staff_name, self.role, self.notes, self.email, self.phone = (staff_name, role, notes, email, phone)
         
 class Entity(db.Model):
@@ -107,7 +108,7 @@ class Product(db.Model):
         return f'<Product ID = {self.id} Product name = {self.name} >'
 
     def __init__(self, name, description="N/A"):
-        self.name, self.description = (name, description)            
+        self.product_name, self.description = (name, description)            
             
 class Intake(db.Model):
     """A lower-level category of product, identified by sku."""
@@ -132,14 +133,14 @@ class Intake(db.Model):
     sale_instance = db.relationship("Item", backref='variant')
     
     #REF: Staff Info
-    staff_name = db.Column(db.String(), db.ForeignKey(Staff.staff_name))
+    staff_id = db.Column(db.Integer(), db.ForeignKey(Staff.id))
     
 
     def __repr__(self):
         return f'< Product name = {self.get_by_product} SKU = {self.sku} >'
 
-    def __init__(self, sku, product_id, selling_price, initial_unit_count, cost_per_unit, licensing_fee, entity_id, staff_name, notes="N/A"):
-        self.sku, self.product_id, self.selling_price, self.initial_unit_count, self.cost_per_unit, self.licensing_fee, self.entity_id, self.staff_name,  self.notes = (sku, product_id, selling_price, initial_unit_count, cost_per_unit, licensing_fee, entity_id, staff_name, notes)
+    def __init__(self, date, sku, product_id, selling_price, initial_unit_count, cost_per_unit, licensing_fee, entity_id, staff_id, notes="N/A"):
+        self.date, self.sku, self.product_id, self.selling_price, self.initial_unit_count, self.cost_per_unit, self.licensing_fee, self.entity_id, self.staff_id, self.notes = (date, sku, product_id, selling_price, initial_unit_count, cost_per_unit, licensing_fee, entity_id, staff_id, notes)
 
 def get_all_products():
     """Returns intake related to SKU"""

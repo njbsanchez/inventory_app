@@ -1,32 +1,32 @@
 [{
-    "1": [{
+    "1": {
       "staff_name": "AAA",
       "role": "Broker",
       "email": "aaa@gmail.com",
       "phone": "111-111-1111"
-    }]
-  },
-  {
-    "2": [{
+    }
+  ,
+  
+    "2": {
       "staff_name": "BBB",
       "role": "Broker",
       "email": "aaa@gmail.com",
       "phone": "111-111-1111"
-    }]
-  },
-  {
-    "3": [{
+    }
+  ,
+  
+    "3": {
       "staff_name": "CCC",
       "role": "Staff",
       "email": "ccc@gmail.com",
       "phone": "111-111-1111"
-    }]
-  },
-  {
-    "4": [{
+    }
+  ,
+  
+    "4": {
       "staff_name": "DDD",
       "role": "Staff",
       "email": "ddd@gmail.com",
       "phone": "111-111-1111"
-    }]
+    }
   }]

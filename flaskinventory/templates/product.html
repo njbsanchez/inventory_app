@@ -1,30 +1,31 @@
 <!DOCTYPE html>
 {% extends "base.html" %} 
+{% import "bootstrap/wtf.html" as wtf %}
 
 {% block head %}
 	<style>
 	</style>
 {% endblock %}
 
-{% block title %} Staff Management {% endblock %}
+{% block title %} Product Management {% endblock %}
 
 {% block body %}
 
 <div class="container">
 
-	<h1>Staff</h1>
+	<h1>Product</h1>
 	<div >
-		<h3 style="display: inline-block;margin:0;"> Add staff members.</h3>
+		<h3 style="display: inline-block;margin:0;"> Add product.</h3>
 		<button type="button" class="btn btn-add" data-toggle="modal" data-target="#exampleModal">
-		<span class="btn-icon-add"><i class="glyphicon glyphicon-plus"></i></span>Add Staff</button>
+		<span class="btn-icon-add"><i class="glyphicon glyphicon-plus"></i></span>Add Product</button>
 	</div>
 
-	<!-- add Modal code here-->
+<!-- add Modal code here-->
 	<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="margin-top:150px;">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h3 class="modal-title" id="exampleModalLabel">Add Staff</h3>
+					<h3 class="modal-title" id="exampleModalLabel">Add Product</h3>
 					<button
 						type="button"
 						class="close"
@@ -34,20 +35,17 @@
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
-				<form action="" method="post">
-					{{ form.csrf_token() }}
-					{{ form.staff_name.label(class="form-control-label") }}<br />
-					{{ form.staff_name(class="form-control form-control-lg") }} 
-					{{ form.role.label(class="form-control-label") }}<br />
-					{{ form.role(class="form-control form-control-lg") }} 
-					{{ form.email.label(class="form-control-label") }}<br />
-					{{ form.email(class="form-control form-control-lg") }} 
-					{{ form.phone.label(class="form-control-label") }}<br />
-					{{ form.phone(class="form-control form-control-lg") }}
-				</div>
+				<form class="form-addstaff form form-horizontal" method="post" role="form">
+					<div>
+					<h2 class="form-addstaff-heading">Add Product</h2>
+					{{ form.hidden_tag() }}
+					{{ wtf.form_errors(form, hiddens="only") }}
+					{{ wtf.form_field(form.prodname) }}
+					{{ wtf.form_field(form.prod_desc) }}
+					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-						<div>{{ form.staffsubmit(class="btn btn-primary") }}</div>
+						<div>{{ form.prodsubmit(class="btn btn-primary") }}</div>
 					</div>
 				</form>
 			</div>
@@ -59,26 +57,22 @@
 		<thead>
 			<tr>
 				<th>ID</th>
-				<th>Name</th>
-				<th>Role</th>
-				<th>Email</th>
-				<th>Phone Number</th>
+				<th>Product Name</th>
+				<th>Product Description</th>
 			</tr>
 		</thead>
 		<tbody>
 			{% for p in details %}
 			<tr>
 				<td>{{p.id}}</td>
-				<td>{{p.staff_name}}</td>
-				<td>{{p.role}}</td>
-				<td>{{p.email}}</td>
-				<td>{{p.phone}}</td>
+				<td>{{p.product_name}}</td>
+				<td>{{p.description}}</td>
 				<td>
 					<button
 						type="button"
 						class="btn btn-edit"
 						data-toggle="modal"
-						data-target="#edit{{d.prod_id}}"
+						data-target="#edit{{p.id}}"
 					>
 						<span class="btn-icon"
 							><i class="glyphicon glyphicon-pencil"></i></span

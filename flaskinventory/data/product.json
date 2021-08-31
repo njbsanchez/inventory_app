@@ -1,25 +1,21 @@
 [{
-    "1": [{
-      "product_name": "Applebees",
-      "description": ""
-    }]
+  "1": {
+    "product_name": "Applebees",
+    "description": ""
   },
-  {
-    "2": [{
-      "product_name": "Burger King",
-      "description": ""
-    }]
+
+  "2": {
+    "product_name": "Burger King",
+    "description": ""
   },
-  {
-    "3": [{
-      "product_name": "Chuckie Cheese",
-      "description": ""
-    }]
+
+  "3": {
+    "product_name": "Chuckie Cheese",
+    "description": ""
   },
-  {
-    "4": [{
-      "product_name": "Dairy Queen",
-      "description": ""
-    }]
+
+  "4": {
+    "product_name": "Dairy Queen",
+    "description": ""
   }
-]
+}]

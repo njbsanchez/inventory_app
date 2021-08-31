@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 {% extends "base.html" %} 
-{% from 'common.html' import edit_field %}
+{% import "bootstrap/wtf.html" as wtf %}
+
 {% block head %}
 	<style>
 	</style>
 {% endblock %}
 
-{% block title %} Intake Tracker {% endblock %}
+{% block title %} Staff Management {% endblock %}
 
 {% block body %}
 
@@ -34,20 +35,26 @@
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
-				<form class="form-addstaff form form-horizontal" method="post" role="form">
+				<form class="form-addintake form form-horizontal" method="post" role="form">
 					<div>
-					<h2 class="form-addstaff-heading">Add Intake</h2>
+					<h2 class="form-addintake-heading">Add Intake</h2>
 					{{ form.hidden_tag() }}
+					{{ form.csrf_token  }}
 					{{ wtf.form_errors(form, hiddens="only") }}
-					{{ wtf.form_field(form.staff_name) }}
-					{{ wtf.form_field(form.role) }}
-					{{ wtf.form_field(form.email) }}
-					{{ wtf.form_field(form.phone) }}
+					{{ wtf.form_field(form.date) }}
+					{{ form.product_id }}
+					{{ wtf.form_field(form.sku) }}
+					{{ wtf.form_field(form.selling_price) }}
 					{{ wtf.form_field(form.notes) }}
+					{{ wtf.form_field(form.init_unitcount) }}
+					{{ wtf.form_field(form.cost_perunit) }}
+					{{ wtf.form_field(form.licensingfee) }}
+					{{ form.supplier }}
+					{{ form.staff_id }}
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-						<div>{{ form.staffsubmit(class="btn btn-primary") }}</div>
+						<div>{{ form.intakesubmit(class="btn btn-primary") }}</div>
 					</div>
 				</form>
 			</div>
@@ -58,27 +65,31 @@
 	<table class="table table-hover">
 		<thead>
 			<tr>
-				<th>ID</th>
-				<th>Name</th>
-				<th>Role</th>
-				<th>Email</th>
-				<th>Phone Number</th>
+				<th>Date</th>
+				<th>Product Name</th>
+				<th>SKU</th>
+				<th>Supplier</th>
+				<th>Initial Unit Count</th>
+				<th>Cost per Unit</th>
+				<th>Selling Price</th>
 			</tr>
 		</thead>
 		<tbody>
 			{% for p in details %}
 			<tr>
-				<td>{{p.id}}</td>
-				<td>{{p.staff_name}}</td>
-				<td>{{p.role}}</td>
-				<td>{{p.email}}</td>
-				<td>{{p.phone}}</td>
+				<td>{{p.date}}</td>
+				<td>{{p.product_id}}</td>
+				<td>{{p.sku}}</td>
+				<td>{{p.entity_id}}</td>
+				<td>{{p.initial_unit_count}}</td>
+				<td>{{p.cost_per_unit}}</td>
+				<td>{{p.selling_price}}</td>
 				<td>
 					<button
 						type="button"
 						class="btn btn-edit"
 						data-toggle="modal"
-						data-target="#edit{{d.prod_id}}"
+						data-target="#edit{{p.sku}}"
 					>
 						<span class="btn-icon"
 							><i class="glyphicon glyphicon-pencil"></i></span

@@ -1,40 +1,37 @@
 [{
-    "1": [{
-      "customer_name": "Aaron Carter",
-      "company_name": "Company A",
-      "entity_type": "MJ",
-      "email": "aaron@email.com",
-      "phone": "111-111-1111",
-      "notes": ""
-    }]
+  "1": {
+    "contact_name": "Aaron Carter",
+    "company_name": "Company A",
+    "entity_type": "MJ",
+    "email": "aaron@email.com",
+    "phone": "111-111-1111",
+    "notes": ""
   },
-  {
-    "2": [{
-    "customer_name": "Bretman Rock",
+
+  "2": {
+    "contact_name": "Bretman Rock",
     "company_name": "Company B",
     "entity_type": "MJ",
     "email": "bretman@email.com",
     "phone": "111-111-1111",
     "notes": ""
-    }]
   },
-  {
-    "3": [{
-    "customer_name": "Cardi B",
+
+  "3": {
+    "contact_name": "Cardi B",
     "company_name": "Company C",
     "entity_type": "MJ",
     "email": "cardi@email.com",
     "phone": "111-111-1111",
     "notes": ""
-    }]
   },
-  {
-    "4": [{
-    "customer_name": "Diana Ross",
+
+  "4": {
+    "contact_name": "Diana Ross",
     "company_name": "Company D",
     "entity_type": "MJ",
     "email": "diana@email.com",
     "phone": "111-111-1111",
     "notes": ""
-    }]
-  }]
+  }
+}]
