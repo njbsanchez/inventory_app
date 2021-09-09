@@ -114,7 +114,7 @@ class Intake(db.Model):
     """A lower-level category of product, identified by sku."""
     
     
-    date = db.Column(db.DateTime, default=datetime.datetime.now)
+    date = db.Column(db.Date, nullable=False)
     
      # REF: Product table
     product_id = db.Column(db.Integer(), db.ForeignKey(Product.id), nullable=False)
@@ -137,7 +137,7 @@ class Intake(db.Model):
     
 
     def __repr__(self):
-        return f'< Product name = {self.get_by_product} SKU = {self.sku} >'
+        return f'< Product name = {self.product_id} SKU = {self.sku} >'
 
     def __init__(self, date, sku, product_id, selling_price, initial_unit_count, cost_per_unit, licensing_fee, entity_id, staff_id, notes="N/A"):
         self.date, self.sku, self.product_id, self.selling_price, self.initial_unit_count, self.cost_per_unit, self.licensing_fee, self.entity_id, self.staff_id, self.notes = (date, sku, product_id, selling_price, initial_unit_count, cost_per_unit, licensing_fee, entity_id, staff_id, notes)
@@ -170,7 +170,7 @@ class Sale(db.Model):
     
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     invoice_no = db.Column(db.String, nullable=False)
-    date = db.Column(db.DateTime, default=datetime.datetime.now)
+    date = db.Column(db.Date, nullable=False)
     prem_disc_percentage =  db.Column(db.Integer, nullable=False)
     wiring_fee = db.Column(db.Float(10), nullable=False)
     
@@ -178,16 +178,16 @@ class Sale(db.Model):
     entity_id = db.Column(db.Integer(), db.ForeignKey(Entity.id))
     
     #REF: Staff Info
-    seller_name = db.Column(db.String(), db.ForeignKey(Staff.staff_name))
+    staff_id = db.Column(db.Integer(), db.ForeignKey(Staff.id))
     broker_fee = db.Column(db.Float(10), nullable=False)
     
     items = db.relationship("Item", backref='sale')
     
-    def __repr__(self):
-        return f'<Customer = {self.name} Invoice = {self.invoice_no} Date = {self.date} >'
+    # def __repr__(self):
+    #     return f'<Customer = {self.name} Invoice = {self.invoice_no} Date = {self.date} >'
     
-    def __init__(self, invoice_receipt_no, prem_disc_percentage, wiring_fee, entity_id, staff_name, broker_fee, ):
-        self.invoice_receipt_no, self.prem_disc_percentage, self.wiring_fee, self.entity_id, self.staff_name, self.broker_fee = (invoice_receipt_no, prem_disc_percentage, wiring_fee, entity_id, staff_name, broker_fee)
+    def __init__(self, invoice_no, date,  prem_disc_percentage, wiring_fee, entity_id, staff_id, broker_fee, ):
+        self.invoice_no,self.date, self.prem_disc_percentage, self.wiring_fee, self.entity_id, self.staff_id, self.broker_fee = (invoice_no, date, prem_disc_percentage, wiring_fee, entity_id, staff_id, broker_fee)
     
     def get_cart(self):
         """returns all cart items from given sale"""
@@ -198,6 +198,7 @@ class Item(db.Model):
     
     #Item info
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    product_id = db.Column(db.Integer(), db.ForeignKey(Product.id), nullable=False)
     sku = db.Column(db.String(), db.ForeignKey(Intake.sku))
     quantity = db.Column(db.Integer(), nullable = False)
 

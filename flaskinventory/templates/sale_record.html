@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+{% extends "base.html" %} {% import "bootstrap/wtf.html" as wtf %} {% block
+head%}
+<style></style>
+<script src="/static/js/modals.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<link
+	rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+/>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+{% endblock %} {% block title %} Sale {% endblock %} {% block body %}
+
+<div class="container">
+	<h1>Intake</h1>
+	<div>
+		<h3 style="display: inline-block; margin: 0">Add Sale</h3>
+		<button
+			type="button"
+			class="btn btn-add"
+			data-toggle="modal"
+			data-target="#saleModal1"
+		>
+			<span class="btn-icon-add"><i class="glyphicon glyphicon-plus"></i></span
+			>Add Sale
+		</button>
+	</div>
+
+	<!-- add Modal code here-->
+	<div
+		class="modal fade"
+		id="saleModal1"
+		tabindex="-1"
+		role="dialog"
+		aria-labelledby="saleModalLabel"
+		aria-hidden="true"
+		style="margin-top: 150px"
+	>
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h3 class="modal-title" id="exampleModalLabel">Add Sale</h3>
+					<button
+						type="button"
+						class="close"
+						data-dismiss="modal"
+						aria-label="Close"
+					>
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<form
+					class="form-addsale form form-horizontal"
+					method="post"
+					role="form"
+				>
+					<div>
+						<h2 class="form-addEntity-heading">Add Sale</h2>
+						{{ form.hidden_tag() }} {{ wtf.form_errors(form, hiddens="only") }}
+						{{ wtf.form_field(form.invoice_no) }} {{ wtf.form_field(form.date)
+						}} {{ wtf.form_field(form.prem_disc) }} {{
+						wtf.form_field(form.wiring_fee) }}
+						<div class="form-group required">
+							<label class="control-label" for="entity">Customer Name</label>
+							<p></p>
+							{{ form.entity }}
+							<p></p>
+						</div>
+						<div class="form-group required">
+							<label class="control-label" for="staff">Seller/Staff</label>
+							<p></p>
+							{{ form.staff_id }}
+							<p></p>
+						</div>
+						{{ wtf.form_field(form.broker_fee) }}
+					</div>
+					<div class="modal-footer">
+						<div>{{ form.salesubmit(class='btn btn-primary btn-next') }}</div>
+						<button
+							type="button"
+							class="btn btn-secondary"
+							data-dismiss="modal"
+						>
+							Close
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!--end of modal-->
+
+	<!-- Modal2 -->
+	<div
+		class="modal fade"
+		id="saleModal2"
+		tabindex="-1"
+		role="dialog"
+		aria-labelledby="saleModalLabel"
+		aria-hidden="true"
+	>
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button
+						type="button"
+						class="close"
+						data-dismiss="modal"
+						aria-label="Close"
+					>
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="saleModalLabel">Modal title 2</h4>
+				</div>
+				<div class="modal-body">
+					<form>
+						<fieldset>
+							<div class="form-top">
+								<div class="form-top-left">
+									<h3>Step 2 / 3</h3>
+									<p>Set up your account:</p>
+								</div>
+								<div class="form-top-right">
+									<i class="fa fa-key"></i>
+								</div>
+							</div>
+							<div class="form-bottom">
+								<div class="form-group">
+									<label class="sr-only" for="form-email">Email</label>
+									<input
+										name="form-email"
+										placeholder="Email..."
+										class="form-email form-control"
+										id="form-email"
+										type="text"
+									/>
+								</div>
+								<div class="form-group">
+									<label class="sr-only" for="form-password">Password</label>
+									<input
+										name="form-password"
+										placeholder="Password..."
+										class="form-password form-control"
+										id="form-password"
+										type="password"
+									/>
+								</div>
+								<div class="form-group">
+									<label class="sr-only" for="form-repeat-password"
+										>Repeat password</label
+									>
+									<input
+										name="form-repeat-password"
+										placeholder="Repeat password..."
+										class="form-repeat-password form-control"
+										id="form-repeat-password"
+										type="password"
+									/>
+								</div>
+								<button type="button" class="btn btn-next">Next</button>
+							</div>
+						</fieldset>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default btn-next">Next</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">
+						Close
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--end of modal2-->
+
+	<table class="table table-hover">
+		<thead>
+			<tr>
+				<th>Date</th>
+				<th>Invoice</th>
+				<th>Customer</th>
+				<th>Seller</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for p in details %}
+			<tr>
+				<td>{{p.date}}</td>
+				<td>{{p.invoice_no}}</td>
+				<td>{{p.entity_id}}</td>
+				<td>{{p.staff_id}}</td>
+				<td>
+					<button
+						type="button"
+						class="btn btn-edit"
+						data-toggle="modal"
+						data-target="#"
+					>
+						<span class="btn-icon"
+							><i class="glyphicon glyphicon-pencil"></i></span
+						>Edit (coming soon!)
+					</button>
+				</td>
+			</tr>
+			{%endfor%}
+		</tbody>
+	</table>
+</div>
+{% endblock %}

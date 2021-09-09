@@ -1,7 +1,7 @@
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, FieldList, FloatField, FormField, BooleanField, DateField, IntegerField, SelectField, SubmitField, TextField, validators
-from wtforms.fields.html5 import TelField, EmailField
+from wtforms import StringField, FieldList, FloatField, FormField, BooleanField, IntegerField, SelectField, SubmitField, TextField, validators
+from wtforms.fields.html5 import TelField, EmailField, DateField
 # from wtforms.validators import DataRequired, NumberRange, Length, Email, validators
 from flask_bootstrap import Bootstrap
 
@@ -46,7 +46,7 @@ class addproduct(FlaskForm):
 
 class addintake(FlaskForm):
     
-    date = DateField('Intake Date', format='%Y-%m-%d')
+    date = DateField('Intake Date (format: 12-24-2000)', format='%Y-%m-%d')
     
     # Selling Info
     product_id = SelectField('Product Category', choices=[], coerce=int, option_widget=None) #https://stackoverflow.com/questions/12850605/how-do-i-generate-dynamic-fields-in-wtforms/18324514
@@ -62,24 +62,24 @@ class addintake(FlaskForm):
     staff_id = SelectField('Intake Staff', choices=[], coerce=int, option_widget=None, validate_choice=True) #https://stackoverflow.com/questions/12850605/how-do-i-generate-dynamic-fields-in-wtforms/18324514
     intakesubmit = SubmitField('Save Intake')
 
-# class additem(FlaskForm):
-#     sku = SelectField('Supplier', choices=[], coerce=int, validate_choice=True)
-#     quantity = IntegerField('Quantity', [validators.NumberRange(min=5, max=1000000),validators.DataRequired()])
+class additem(FlaskForm):
+    
+    sku = SelectField('Supplier', choices=[], coerce=int, validate_choice=True)
+    product_id = SelectField('Product Category', choices=[], coerce=int, option_widget=None) #https://stackoverflow.com/questions/12850605/how-do-i-generate-dynamic-fields-in-wtforms/18324514
+    quantity = IntegerField('Quantity', [validators.NumberRange(min=5, max=1000000),validators.DataRequired()])
 
-# class addsale(FlaskForm):
-#     invoice_no = StringField('Invoice Number', [validators.DataRequired()])
-#     date = DateField('Intake Date', format='%Y-%m-%d')
-#     prem_disc = FloatField('Licensing Fee')
-#     wiring_fee = FloatField('Licensing Fee')
+class addsale(FlaskForm):
+    invoice_no = StringField('Invoice Number', [validators.DataRequired()])
+    date = DateField('Intake Date', format='%Y-%m-%d')
+    prem_disc = FloatField('Premium/Discount Percentage')
+    wiring_fee = FloatField('Wiring Fee')
+
+    entity = SelectField('Customer', choices=[], coerce=int, option_widget=None, validate_choice=True)
     
-#     entity = SelectField('Customer', choices=[], coerce=int, validate_choice=True)
+    staff_id = SelectField('Staff/Sales Associate', choices=[], coerce=int, option_widget=None, validate_choice=True)
+    broker_fee = FloatField('Broker Fee')
     
-#     seller_staff = SelectField('Seller/Staff', choices=[], coerce=int, validate_choice=True)
-#     broker_fee = FloatField('Broker Fee')
-    
-#     sale_items = FieldList(FormField(additem), min_entries=1) #https://stackoverflow.com/questions/30121763/how-to-use-a-wtforms-fieldlist-of-formfields
-    
-#     salesubmit = SubmitField('Save Sale')
+    salesubmit = SubmitField('Proceed to Add Items')
 
 
 # class recordsample(FlaskForm):

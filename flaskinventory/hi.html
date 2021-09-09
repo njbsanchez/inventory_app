@@ -1,0 +1,171 @@
+<html><head>
+		<style>html{visibility: hidden;opacity:0;}</style>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+		<!-- Bootstrap CSS -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+		<link rel="stylesheet" type="text/css" href="/static/main.css">
+		<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
+
+		<title>Inventory site</title>
+  	</head>
+	<body class="modal-open">
+		<header>
+		<navbar>
+				<h2>Navigation</h2>
+				<ul>
+					<li><a href="/">Home</a></li>
+					<li><a href="/intake">Record Intake</a></li>
+					<li><a href="/record_sale">Record Sale</a></li>
+					<li><a href="/record_sample">Record Sample</a></li>
+					<li><a href="/inventory">Current Inventory</a></li>
+					<li><a href="/product">Manage Product</a></li>
+					<li><a href="/entity">Manage Entities</a></li>
+					<li><a href="/staff">Manage Staff</a></li>
+					<li><a href="#">Export (Coming Soon)</a></li>
+
+				</ul>
+
+				
+				<p class="flash-msg">Add intake to view</p>
+				 
+
+<div class="container">
+
+	<h1>Intake</h1>
+	<div>
+		<h3 style="display: inline-block;margin:0;"> Add Intake.</h3>
+		<button type="button" class="btn btn-add" data-toggle="modal" data-target="#exampleModal">
+		<span class="btn-icon-add"><i class="glyphicon glyphicon-plus"></i></span>Add Intake</button>
+	</div>
+
+	<!-- add Modal code here-->
+	<div class="modal fade show" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" style="margin-top: 150px; display: block; padding-left: 0px;">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h3 class="modal-title" id="exampleModalLabel">Add Intake</h3>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">×</span>
+					</button>
+				</div>
+				<form class="form-addstaff form form-horizontal" method="post" role="form">
+					<div>
+					<h2 class="form-addstaff-heading">Add Intake</h2>
+					<input id="csrf_token" name="csrf_token" type="hidden" value="IjRjYjkzNTQ2ZGMzMDI5MGUzOWY1NzIwM2UxNjRmNTJkNzMwN2MwMTki.YS2MGw.UbL46gu33xzKA9oC8s0K8OKE3vU">
+					
+					
+
+
+<div class="form-group "><label class="control-label" for="date">Intake Date</label>
+        
+          <input class="form-control" id="date" name="date" type="text" value="">
+        
+  </div>
+
+
+					<select id="product_id" name="product_id"><option value="1">None</option><option value="2">None</option><option value="3">None</option><option value="4">None</option><option value="5">Applebees</option><option value="6">Burger King</option><option value="7">Chuckie Cheese</option><option value="8">Dairy Queen</option></select>
+					
+
+
+<div class="form-group  required"><label class="control-label" for="sku">SKU</label>
+        
+          <input class="form-control" id="sku" name="sku" required="" type="text" value="">
+        
+  </div>
+
+
+					
+
+
+<div class="form-group  required"><label class="control-label" for="selling_price">Selling Price per Unit</label>
+        
+          <input class="form-control" id="selling_price" name="selling_price" required="" type="text" value="">
+        
+  </div>
+
+
+					
+
+
+<div class="form-group "><label class="control-label" for="notes">Notes</label>
+        
+          <input class="form-control" id="notes" name="notes" type="text" value="">
+        
+  </div>
+
+
+					
+
+
+<div class="form-group  required"><label class="control-label" for="init_unitcount">Intake Amount</label>
+        
+          <input class="form-control" id="init_unitcount" name="init_unitcount" required="" type="text" value="">
+        
+  </div>
+
+
+					
+
+
+<div class="form-group  required"><label class="control-label" for="cost_perunit">$ Cost per Unit</label>
+        
+          <input class="form-control" id="cost_perunit" name="cost_perunit" required="" type="text" value="">
+        
+  </div>
+
+
+					
+
+
+<div class="form-group  required"><label class="control-label" for="licensingfee">Licensing Fee</label>
+        
+          <input class="form-control" id="licensingfee" name="licensingfee" required="" type="text" value="">
+        
+  </div>
+
+
+					<select id="supplier" name="supplier"><option value="1">Aaron Carter</option><option value="2">Bretman Rock</option><option value="3">Cardi B</option><option value="4">Diana Ross</option></select>
+					<select id="staff_id" name="staff_id"><option value="3">AAA</option><option value="5">CCC</option><option value="6">DDD</option></select>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						<div><input class="btn btn-primary" id="intakesubmit" name="intakesubmit" type="submit" value="Save Intake"></div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!--end of modal design-->
+
+	<table class="table table-hover">
+		<thead>
+			<tr>
+				<th>Date</th>
+				<th>Product Name</th>
+				<th>SKU</th>
+				<th>Supplier</th>
+				<th>Initial Unit Count</th>
+				<th>Cost per Unit</th>
+				<th>Selling Price</th>
+			</tr>
+		</thead>
+		<tbody>
+			
+		</tbody>
+	</table>
+</div>
+  
+			</navbar>
+		</header>
+		<main>
+		</main>
+		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+	
+
+<div class="modal-backdrop fade show"></div></body></html>

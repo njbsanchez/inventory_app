@@ -1,0 +1,4 @@
+dropdb inventory_psql
+createdb inventory_psql
+python3 flaskinventory/model.py
+python3 seed_database.py
