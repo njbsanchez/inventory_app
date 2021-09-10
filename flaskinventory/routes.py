@@ -244,7 +244,7 @@ def show_sales():
         print('added!')
         flash(f'Sale has been recorded!', 'success')
         
-        return redirect(url_for('show_sale_record'),sale_id=new_sale.id)
+        return redirect(url_for('show_sale_record',sale_id=new_sale.id))
 
     print (form.errors)
     return render_template("sale.html", details=details, form=form)
@@ -288,7 +288,7 @@ def show_sale_record(sale_id):
         flash(f'Item has been added!', 'success')
         
         
-        return redirect(url_for('show_sale_record'),sale_id=sale_id)
+        return redirect(url_for('show_sale_record',sale_id=sale_id))
 
     print (form.errors)
     return render_template("sale_record.html",details=details, form=form, sale_id=sale_id)
