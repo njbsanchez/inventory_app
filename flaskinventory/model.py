@@ -186,7 +186,7 @@ class Sale(db.Model):
     # def __repr__(self):
     #     return f'<Customer = {self.name} Invoice = {self.invoice_no} Date = {self.date} >'
     
-    def __init__(self, invoice_no, date,  prem_disc_percentage, wiring_fee, entity_id, staff_id, broker_fee, ):
+    def __init__(self, invoice_no, date,  prem_disc_percentage, wiring_fee, entity_id, staff_id, broker_fee):
         self.invoice_no,self.date, self.prem_disc_percentage, self.wiring_fee, self.entity_id, self.staff_id, self.broker_fee = (invoice_no, date, prem_disc_percentage, wiring_fee, entity_id, staff_id, broker_fee)
     
     def get_cart(self):
@@ -205,6 +205,9 @@ class Item(db.Model):
     #REF: Sale Info
     sale_id = db.Column(db.Integer(), db.ForeignKey(Sale.id))
 
+    def __init__(self, product_id, sku, quantity, sale_id):
+        self.product_id, self.sku, self.quantity, self.sale_id, = (product_id, sku, quantity, sale_id)
+    
 # class Sample(db.Model):
 #     """TO DO"""
     

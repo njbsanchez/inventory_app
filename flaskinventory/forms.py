@@ -67,7 +67,8 @@ class additem(FlaskForm):
     sku = SelectField('Supplier', choices=[], coerce=int, validate_choice=True)
     product_id = SelectField('Product Category', choices=[], coerce=int, option_widget=None) #https://stackoverflow.com/questions/12850605/how-do-i-generate-dynamic-fields-in-wtforms/18324514
     quantity = IntegerField('Quantity', [validators.NumberRange(min=5, max=1000000),validators.DataRequired()])
-
+    itemsubmit = SubmitField('Add Item')
+    
 class addsale(FlaskForm):
     invoice_no = StringField('Invoice Number', [validators.DataRequired()])
     date = DateField('Intake Date', format='%Y-%m-%d')

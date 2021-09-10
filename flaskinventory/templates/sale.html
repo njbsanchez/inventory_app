@@ -76,11 +76,12 @@ head%}
 						{{ wtf.form_field(form.broker_fee) }}
 					</div>
 					<div class="modal-footer">
-						<div>{{ form.salesubmit(class='btn btn-primary btn-next') }}</div>
+						<div>{{ form.salesubmit(class='btn btn-primary') }}</div>
 						<button
 							type="button"
 							class="btn btn-secondary"
 							data-dismiss="modal"
+			
 						>
 							Close
 						</button>
@@ -91,88 +92,6 @@ head%}
 	</div>
 	<!--end of modal-->
 
-	<!-- Modal2 -->
-	<div
-		class="modal fade"
-		id="saleModal2"
-		tabindex="-1"
-		role="dialog"
-		aria-labelledby="saleModalLabel"
-		aria-hidden="true"
-	>
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button
-						type="button"
-						class="close"
-						data-dismiss="modal"
-						aria-label="Close"
-					>
-						<span aria-hidden="true">&times;</span>
-					</button>
-					<h4 class="modal-title" id="saleModalLabel">Modal title 2</h4>
-				</div>
-				<div class="modal-body">
-					<form>
-						<fieldset>
-							<div class="form-top">
-								<div class="form-top-left">
-									<h3>Step 2 / 3</h3>
-									<p>Set up your account:</p>
-								</div>
-								<div class="form-top-right">
-									<i class="fa fa-key"></i>
-								</div>
-							</div>
-							<div class="form-bottom">
-								<div class="form-group">
-									<label class="sr-only" for="form-email">Email</label>
-									<input
-										name="form-email"
-										placeholder="Email..."
-										class="form-email form-control"
-										id="form-email"
-										type="text"
-									/>
-								</div>
-								<div class="form-group">
-									<label class="sr-only" for="form-password">Password</label>
-									<input
-										name="form-password"
-										placeholder="Password..."
-										class="form-password form-control"
-										id="form-password"
-										type="password"
-									/>
-								</div>
-								<div class="form-group">
-									<label class="sr-only" for="form-repeat-password"
-										>Repeat password</label
-									>
-									<input
-										name="form-repeat-password"
-										placeholder="Repeat password..."
-										class="form-repeat-password form-control"
-										id="form-repeat-password"
-										type="password"
-									/>
-								</div>
-								<button type="button" class="btn btn-next">Next</button>
-							</div>
-						</fieldset>
-					</form>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default btn-next">Next</button>
-					<button type="button" class="btn btn-default" data-dismiss="modal">
-						Close
-					</button>
-				</div>
-			</div>
-		</div>
-	</div>
-	<!--end of modal2-->
 
 	<table class="table table-hover">
 		<thead>

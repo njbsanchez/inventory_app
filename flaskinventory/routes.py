@@ -2,7 +2,7 @@
 from flaskinventory.forms import addsale
 from flask import render_template, url_for, redirect, flash, request, jsonify
 # additem, addsale, recordsample,
-from flaskinventory.forms import AddStaff, AddEntity, addproduct, addintake, LoginForm, RegisterForm
+from flaskinventory.forms import AddStaff, AddEntity, addproduct, addintake, LoginForm, RegisterForm, additem
 from flaskinventory.model import db, User, Staff, Entity, Product, Intake, Sale, Item, get_all_staff
 from flask_bootstrap import Bootstrap
 from flaskinventory.app import app
@@ -227,7 +227,7 @@ def show_sales():
     if form.validate_on_submit():
 
         # return '<h1>' + form.product_id.data + form.sku.data + ' ' + form.init_unitcount.data + ' ' +  form.supplier.data + ' ' +  '</h1>'
-
+        
         new_sale = Sale(  invoice_no=form.invoice_no.data,
                           date=form.date.data,
                           prem_disc_percentage=form.prem_disc.data,
@@ -241,62 +241,57 @@ def show_sales():
         db.session.add(new_sale)
         db.session.commit()
         
-        
         print('added!')
         flash(f'Sale has been recorded!', 'success')
         
-    
-        # return redirect(url_for('show_sales'))
-
+        return redirect(url_for('show_sale_record'),sale_id=new_sale.id)
 
     print (form.errors)
     return render_template("sale.html", details=details, form=form)
 
 
 @app.route("/sale_record/<sale_id>", methods=['GET', 'POST'])
-def show_sales():
+def show_sale_record(sale_id):
     """list sales."""
     
-    sale_instance = Sale.query.filter(Sale.bookmarked_user_id == bookmarked_user_id).first()
-    exists = bool(Sale.query.all())
+    sale_instance = Sale.query.filter(Sale.id == sale_id).first()
     
-    form = addsale()
+    details = Item.query.filter(Item.sale_id == sale_id).all()
+    exists = bool(details)
+    
+    form = additem()
 
-    form.entity.choices = [(entity.id, entity.contact_name)
-                               for entity in Entity.query.all()]
-    form.staff_id.choices = [(staff.id, staff.staff_name)
-                               for staff in Staff.query.all()]
-
+    form.product_id.choices = [(product.id, product.product_name)
+                                 for product in Product.query.all()]
+    
+    form.sku.choices = [(intake.sku)
+                                 for intake in Intake.query.all()]
+    
     if exists == False and request.method == 'GET':
-        flash(f'Add sale to view', 'info')
+        flash(f'Add sale items to view', 'info')
 
     if form.validate_on_submit():
 
         # return '<h1>' + form.product_id.data + form.sku.data + ' ' + form.init_unitcount.data + ' ' +  form.supplier.data + ' ' +  '</h1>'
-
-        new_sale = Sale(  invoice_no=form.invoice_no.data,
-                          date=form.date.data,
-                          prem_disc_percentage=form.prem_disc.data,
-                          wiring_fee=form.wiring_fee.data,
-                          entity_id=form.entity.data,
-                          staff_id=form.staff_id.data,
-                          broker_fee=form.broker_fee.data
-                          )
+        
+        new_item = Item(product_id=form.product_id.data,
+                        sku=form.sku.data,
+                        quantity=form.quantity.data,
+                        sale_id=sale_id
+                        )
                           
-        print(new_sale)
-        db.session.add(new_sale)
+        print(new_item)
+        db.session.add(new_item)
         db.session.commit()
         
-        
         print('added!')
-        flash(f'Sale has been recorded!', 'success')
+        flash(f'Item has been added!', 'success')
         
-    
-        # return redirect(url_for('show_sales'))
-
+        
+        return redirect(url_for('show_sale_record'),sale_id=sale_id)
 
     print (form.errors)
-    return render_template("sale.html", details=details, form=form)
+    return render_template("sale_record.html",details=details, form=form, sale_id=sale_id)
 
 
 
