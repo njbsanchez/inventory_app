@@ -104,6 +104,7 @@ class Product(db.Model):
     
     variants = db.relationship("Intake", backref='product')
     
+    
     def __repr__(self):
         return f'<Product ID = {self.id} Product name = {self.name} >'
 
@@ -181,13 +182,15 @@ class Sale(db.Model):
     staff_id = db.Column(db.Integer(), db.ForeignKey(Staff.id))
     broker_fee = db.Column(db.Float(10), nullable=False)
     
+    notes = db.Column(db.Text)
+    
     items = db.relationship("Item", backref='sale')
     
     # def __repr__(self):
     #     return f'<Customer = {self.name} Invoice = {self.invoice_no} Date = {self.date} >'
     
-    def __init__(self, invoice_no, date,  prem_disc_percentage, wiring_fee, entity_id, staff_id, broker_fee):
-        self.invoice_no,self.date, self.prem_disc_percentage, self.wiring_fee, self.entity_id, self.staff_id, self.broker_fee = (invoice_no, date, prem_disc_percentage, wiring_fee, entity_id, staff_id, broker_fee)
+    def __init__(self, invoice_no, date,  prem_disc_percentage, wiring_fee, entity_id, staff_id, broker_fee, notes="N/A"):
+        self.invoice_no,self.date, self.prem_disc_percentage, self.wiring_fee, self.entity_id, self.staff_id, self.broker_fee, self.notes = (invoice_no, date, prem_disc_percentage, wiring_fee, entity_id, staff_id, broker_fee, notes)
     
     def get_cart(self):
         """returns all cart items from given sale"""
@@ -201,56 +204,69 @@ class Item(db.Model):
     product_id = db.Column(db.Integer(), db.ForeignKey(Product.id), nullable=False)
     sku = db.Column(db.String(), db.ForeignKey(Intake.sku))
     quantity = db.Column(db.Integer(), nullable = False)
+    
+    notes = db.Column(db.Text)
 
     #REF: Sale Info
     sale_id = db.Column(db.Integer(), db.ForeignKey(Sale.id))
 
-    def __init__(self, product_id, sku, quantity, sale_id):
-        self.product_id, self.sku, self.quantity, self.sale_id, = (product_id, sku, quantity, sale_id)
+    def __init__(self, product_id, sku, quantity, sale_id, notes="N/A"):
+        self.product_id, self.sku, self.quantity, self.sale_id, self.notes = (product_id, sku, quantity, sale_id, notes)
     
-# class Sample(db.Model):
-#     """TO DO"""
+class Sample(db.Model):
+    """TO DO"""
     
-#     id = db.Column(db.Integer, auto_increment=True, primary_key=True)
-#     invoice_no = db.Column(db.String, nullable=False)
-#     date = db.Column(db.DateTime, default=datetime.datetime.now)
-#     prem_disc_percentage =  db.Column(db.Integer, nullable=False)
-#     wiring_fee = db.Column(db.Float(10), nullable=False)
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    record_no = db.Column(db.String, nullable=False)
+    date = db.Column(db.DateTime, default=datetime.datetime.now)
+    notes = db.Column(db.Text)
     
-#     #REF: Customer Info
-#     entity_id = db.Column(db.Integer(), db.ForeignKey(Entity.id))
+    #REF: Customer Info
+    entity_id = db.Column(db.Integer(), db.ForeignKey(Entity.id))
     
-#     #REF: Staff Info
-#     seller_name = db.Column(db.String(), db.ForeignKey(Staff.staff_name))
-#     broker_fee = db.Column(db.Float(10), nullable=False)
+    #REF: Staff Info
+    staff_id = db.Column(db.Integer(), db.ForeignKey(Staff.id))
     
-#     items = db.relationship("Item", backref='sale')
+    items = db.relationship("SampleItem", backref='sample')
+    
+    def __init__(self, record_no, date, entity_id, staff_id):
+        self.record_no, self.date, self.entity_id, self.staff_id = (record_no, date, entity_id, staff_id)
+
+class SampleItem(db.Model):
+    
+    #Item info
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    product_id = db.Column(db.Integer(), db.ForeignKey(Product.id), nullable=False)
+    sku = db.Column(db.String(), db.ForeignKey(Intake.sku))
+    quantity = db.Column(db.Integer(), nullable = False)
+    notes = db.Column(db.Text)
+
+    #REF: Sale Info
+    sample_record_id = db.Column(db.Integer(), db.ForeignKey(Sample.id))
+
+    def __init__(self, product_id, sku, quantity, sample_record_id, notes="N/A"):
+        self.product_id, self.sku, self.quantity, self.sample_record_id, self.notes = (product_id, sku, quantity, sample_record_id, notes)
 
 def get_sale_by_id(id):
     """Return sale with given ID."""
     
     return Sale.query.filter(Sale.id==id).first()
-
 def get_sale_by_invoice(invoice_no):
     """Return sale with given invoice number."""
     
     return Sale.query.filter(Sale.invoice_no==invoice_no).first()
-
 def get_sales_by_customer(entity):
     """Returns all sales related to given entity instance."""
     
     return Sale.query.filter(Sale.entity_id==entity.id).all().order_by("date")
-
 def get_sales_by_seller(seller):
     """Returns all sales related to given staff member/seller."""
     
     return Sale.query.filter(Sale.seller_name==seller.seller_name).all().order_by("date")
-
 def get_sales_from_date(date):
     """Returns all sales related from given date."""
     
     return Sale.query.filter(Sale.date==date).all().order_by("date")
-
 
 if __name__ == '__main__':
     from app import app

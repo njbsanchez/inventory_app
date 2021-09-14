@@ -64,7 +64,7 @@ class addintake(FlaskForm):
 
 class additem(FlaskForm):
     
-    sku = SelectField('Supplier', choices=[], coerce=int, validate_choice=True)
+    sku = SelectField('SKU Number', choices=[], coerce=int, validate_choice=True)
     product_id = SelectField('Product Category', choices=[], coerce=int, option_widget=None) #https://stackoverflow.com/questions/12850605/how-do-i-generate-dynamic-fields-in-wtforms/18324514
     quantity = IntegerField('Quantity', [validators.NumberRange(min=5, max=1000000),validators.DataRequired()])
     itemsubmit = SubmitField('Add Item')
@@ -79,19 +79,32 @@ class addsale(FlaskForm):
     
     staff_id = SelectField('Staff/Sales Associate', choices=[], coerce=int, option_widget=None, validate_choice=True)
     broker_fee = FloatField('Broker Fee')
+    notes = TextField('Notes')
     
     salesubmit = SubmitField('Proceed to Add Items')
 
 
-# class recordsample(FlaskForm):
-#     invoice_no = StringField('Invoice Number', [validators.DataRequired()])
-#     date = DateField('Intake Date', format='%Y-%m-%d')
+class addsample(FlaskForm):
+    record_no = StringField('Invoice Number', [validators.DataRequired()])
+    date = DateField('Intake Date', format='%Y-%m-%d')
     
-#     entity = SelectField('Customer', choices=[], coerce=int, validate_choice=True)
+    entity = SelectField('Customer', choices=[], coerce=int, validate_choice=True)
     
-#     movement = SelectField(u'Sample Check Out or Sample Return?', choices=[('return', 'return'), ('checked-out', 'checked-out')])
-#     seller_staff = SelectField('Seller/Staff', choices=[], coerce=int, validate_choice=True)
+    movement = SelectField(u'Sample Check Out or Sample Return?', choices=[('return', 'return'), ('checked-out', 'checked-out')])
+    staff_id = SelectField('Seller/Staff', choices=[], coerce=int, validate_choice=True)
     
-#     sample_items = FieldList(FormField(additem), min_entries=1) #https://stackoverflow.com/questions/30121763/how-to-use-a-wtforms-fieldlist-of-formfields
+    sample_items = FieldList(FormField(additem), min_entries=1) #https://stackoverflow.com/questions/30121763/how-to-use-a-wtforms-fieldlist-of-formfields
+    notes = TextField('Notes')
     
-#     salesubmit = SubmitField('Save Sale')
+    sampleubmit = SubmitField('Save Sale')
+    
+class addsampleitem(FlaskForm):
+    
+    sku = SelectField('SKU Number', choices=[], coerce=int, validate_choice=True)
+    product_id = SelectField('Product Category', choices=[], coerce=int, option_widget=None) #https://stackoverflow.com/questions/12850605/how-do-i-generate-dynamic-fields-in-wtforms/18324514
+    quantity = IntegerField('Quantity', [validators.NumberRange(min=5, max=1000000),validators.DataRequired()])
+    
+    notes = TextField('Notes')
+    
+    itemsubmit = SubmitField('Add Sample Item')
+    

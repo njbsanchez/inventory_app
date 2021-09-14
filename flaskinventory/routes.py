@@ -2,8 +2,8 @@
 from flaskinventory.forms import addsale
 from flask import render_template, url_for, redirect, flash, request, jsonify
 # additem, addsale, recordsample,
-from flaskinventory.forms import AddStaff, AddEntity, addproduct, addintake, LoginForm, RegisterForm, additem
-from flaskinventory.model import db, User, Staff, Entity, Product, Intake, Sale, Item, get_all_staff
+from flaskinventory.forms import AddStaff, AddEntity, addproduct, addintake, LoginForm, RegisterForm, additem, addsample, addsampleitem
+from flaskinventory.model import db, User, Staff, Entity, Product, Intake, Sale, Item, Sample, SampleItem
 from flask_bootstrap import Bootstrap
 from flaskinventory.app import app
 from flask_bootstrap import Bootstrap
@@ -293,5 +293,88 @@ def show_sale_record(sale_id):
     print (form.errors)
     return render_template("sale_record.html",details=details, form=form, sale_id=sale_id)
 
+
+@app.route("/sample/", methods=['GET', 'POST'])
+def show_samples():
+    """list samples."""
+    
+    details = Sample.query.all()
+    exists = bool(Sample.query.all())
+    
+    form = addsample()
+
+    form.entity.choices = [(entity.id, entity.contact_name)
+                               for entity in Entity.query.all()]
+    form.staff_id.choices = [(staff.id, staff.staff_name)
+                               for staff in Staff.query.all()]
+
+    if exists == False and request.method == 'GET':
+        flash(f'Add sample to view', 'info')
+
+    if form.validate_on_submit():
+
+        # return '<h1>' + form.product_id.data + form.sku.data + ' ' + form.init_unitcount.data + ' ' +  form.supplier.data + ' ' +  '</h1>'
+        
+        new_sample_record = Sample(  record_no=form.record_no.data,
+                          date=form.date.data,
+                          entity_id=form.entity.data,
+                          staff_id=form.staff_id.data,
+                          )
+                          
+        print(new_sample_record)
+        db.session.add(new_sample_record)
+        db.session.commit()
+        
+        print('added!')
+        flash(f'Sample has been recorded!', 'success')
+        
+        return redirect(url_for('show_sample_record',sample_record_id=new_sample_record.id))
+
+    print (form.errors)
+    return render_template("sample.html", details=details, form=form)
+
+
+@app.route("/sample_record/<sample_record_id>", methods=['GET', 'POST'])
+def show_sample_record(sample_record_id):
+    """list samples."""
+    
+    sample_instance = Sample.query.filter(Sample.id == sample_record_id).first()
+    
+    details = SampleItem.query.filter(Item.sample_record_id == sample_record_id).all()
+    exists = bool(details)
+    
+    form = addsampleitem()
+
+    form.product_id.choices = [(product.id, product.product_name)
+                                 for product in Product.query.all()]
+    
+    form.sku.choices = [(intake.sku)
+                                 for intake in Intake.query.all()]
+    
+    if exists == False and request.method == 'GET':
+        flash(f'Add sample items to view', 'info')
+
+    if form.validate_on_submit():
+
+        # return '<h1>' + form.product_id.data + form.sku.data + ' ' + form.init_unitcount.data + ' ' +  form.supplier.data + ' ' +  '</h1>'
+        
+        new_sample_item = SampleItem(product_id=form.product_id.data,
+                        sku=form.sku.data,
+                        quantity=form.quantity.data,
+                        sample_record_id=sample_record_id,
+                        notes=form.notes.data
+                        )
+                          
+        print(new_sample_item)
+        db.session.add(new_sample_item)
+        db.session.commit()
+        
+        print('added!')
+        flash(f'Item has been added!', 'success')
+        
+        return redirect(url_for('show_sample_record',sample_record_id=sample_record_id))
+
+    print (form.errors)
+    return render_template("sample_record.html",sample_instance=sample_instance, details=details, form=form, sample_reocrd_id=sample_record_id)
 
 

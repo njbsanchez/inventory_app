@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+{% extends "base.html" %} {% import "bootstrap/wtf.html" as wtf %} {% block
+head%}
+<style></style>
+<script src="/static/js/modals.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<link
+	rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+/>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+{% endblock %} {% block title %} Sale {% endblock %} {% block body %}
+
+<div class="container">
+	<h1>Sample Items</h1>
+	<div>
+		<h3 style="display: inline-block; margin: 0">Sample Items</h3>
+		<button
+			type="button"
+			class="btn btn-add"
+			data-toggle="modal"
+			data-target="#saleModal1"
+		>
+			<span class="btn-icon-add"><i class="glyphicon glyphicon-plus"></i></span
+			>Add Sample
+		</button>
+	</div>
+
+	<!-- add Modal code here-->
+	<div
+		class="modal fade"
+		id="saleModal1"
+		tabindex="-1"
+		role="dialog"
+		aria-labelledby="saleModalLabel"
+		aria-hidden="true"
+		style="margin-top: 150px">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h3 class="modal-title" id="exampleModalLabel">Add Sample Item</h3>
+					<button
+						type="button"
+						class="close"
+						data-dismiss="modal"
+						aria-label="Close"
+					>
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<form
+					class="form-additem form form-horizontal"
+					method="post"
+					role="form"
+				>
+					<div>
+						<h2 class="form-addEntity-heading">Add Sample Item</h2>
+						{{ form.hidden_tag() }} {{ wtf.form_errors(form, hiddens="only") }}
+						<div class="form-group required">
+							<label class="control-label" for="product_id">Product Name</label>
+							<p></p>
+							{{ form.product_id }}
+							<p></p>
+						</div>
+						<div class="form-group required">
+							<label class="control-label" for="product_id">Product SKU</label>
+							<p></p>
+							{{ form.sku }}
+							<p></p>
+						</div>
+						{{ wtf.form_field(form.quantity)}} 
+						{{ wtf.form_field(form.notes)}} 
+					</div>
+					<div class="modal-footer">
+						<div>{{ form.itemsubmit(class='btn btn-primary btn-next') }}</div>
+						<button
+							type="button"
+							class="btn btn-secondary"
+							data-dismiss="modal"
+						>
+							Close
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!--end of modal-->
+
+	<table class="table table-hover">
+		<thead>
+			<tr>
+				<th>SKU</th>
+				<th>Product</th>
+				<th>Quantity</th>
+				<th>Notes</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for p in details %}
+			<tr>
+				<td>{{p.sku}}</td>
+				<td>[CHANGE TO PRODUCT NAME] {{p.product_id}}</td>
+				<td>{{p.quantity}}</td>
+				<td>{{p.notes}}</td>
+				<td>
+					<button
+						type="button"
+						class="btn btn-edit"
+						data-toggle="modal"
+						data-target="#"
+					>
+						<span class="btn-icon"
+							><i class="glyphicon glyphicon-pencil"></i></span
+						>Edit (coming soon!)
+					</button>
+				</td>
+			</tr>
+			{%endfor%}
+		</tbody>
+	</table>
+</div>
+{% endblock %}
