@@ -11,20 +11,26 @@ head%}
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 {% endblock %} {% block title %} Sale {% endblock %} {% block body %}
-
 <div class="container">
-	<h1>Sample Items</h1>
+	<h1>Sample Record {{ sample_instance.record_no }}</h1>
 	<div>
-		<h3 style="display: inline-block; margin: 0">Sample Items</h3>
-		<button
-			type="button"
-			class="btn btn-add"
-			data-toggle="modal"
-			data-target="#saleModal1"
-		>
-			<span class="btn-icon-add"><i class="glyphicon glyphicon-plus"></i></span
-			>Add Sample
-		</button>
+		<h2> Customer: {{ entity_info.company_name }} - {{ entity_info.contact_name }} </h2>
+		<h3> Contact Info: </h3>
+		<h4> Email: {{ entity_info.email }}</h4>
+		<h4> Phone: {{ entity_info.phone }}</h4>
+		<h4> Notes on Customer: {{ entity_info.notes }}</h4>
+	</div>
+	<div>
+	<h2 style="display: inline-block; margin: 0">Sample Items</h2>
+	<button
+		type="button"
+		class="btn btn-add"
+		data-toggle="modal"
+		data-target="#saleModal1"
+	>
+		<span class="btn-icon-add"><i class="glyphicon glyphicon-plus"></i></span
+		>Add Sample
+	</button>
 	</div>
 
 	<!-- add Modal code here-->

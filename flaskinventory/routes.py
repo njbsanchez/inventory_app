@@ -1,8 +1,6 @@
-
-from flaskinventory.forms import addsale
 from flask import render_template, url_for, redirect, flash, request, jsonify
 # additem, addsale, recordsample,
-from flaskinventory.forms import AddStaff, AddEntity, addproduct, addintake, LoginForm, RegisterForm, additem, addsample, addsampleitem
+from flaskinventory.forms import AddStaff, AddEntity, addproduct, addintake, LoginForm, RegisterForm, additem, addsample, addsampleitem, addsale
 from flaskinventory.model import db, User, Staff, Entity, Product, Intake, Sale, Item, Sample, SampleItem
 from flask_bootstrap import Bootstrap
 from flaskinventory.app import app
@@ -256,6 +254,9 @@ def show_sale_record(sale_id):
     
     sale_instance = Sale.query.filter(Sale.id == sale_id).first()
     
+    entity_info = Entity.query.filter(Entity.id==sale_instance.entity_id).first()
+    staff_info = Staff.query.filter(Staff.id==sale_instance.staff_id).first()
+    
     details = Item.query.filter(Item.sale_id == sale_id).all()
     exists = bool(details)
     
@@ -291,7 +292,7 @@ def show_sale_record(sale_id):
         return redirect(url_for('show_sale_record',sale_id=sale_id))
 
     print (form.errors)
-    return render_template("sale_record.html",details=details, form=form, sale_id=sale_id)
+    return render_template("sale_record.html",details=details, staff_info=staff_info, entity_info=entity_info, sale_instance=sale_instance, form=form, sale_id=sale_id)
 
 
 @app.route("/sample/", methods=['GET', 'POST'])
@@ -319,6 +320,8 @@ def show_samples():
                           date=form.date.data,
                           entity_id=form.entity.data,
                           staff_id=form.staff_id.data,
+                          movement=form.movement.data,
+                          notes=form.notes.data
                           )
                           
         print(new_sample_record)
@@ -340,7 +343,9 @@ def show_sample_record(sample_record_id):
     
     sample_instance = Sample.query.filter(Sample.id == sample_record_id).first()
     
-    details = SampleItem.query.filter(Item.sample_record_id == sample_record_id).all()
+    entity_info = Entity.query.filter(Entity.id==sample_instance.entity_id).first()
+    
+    details = SampleItem.query.filter(SampleItem.sample_record_id == sample_record_id).all()
     exists = bool(details)
     
     form = addsampleitem()
@@ -375,6 +380,6 @@ def show_sample_record(sample_record_id):
         return redirect(url_for('show_sample_record',sample_record_id=sample_record_id))
 
     print (form.errors)
-    return render_template("sample_record.html",sample_instance=sample_instance, details=details, form=form, sample_reocrd_id=sample_record_id)
+    return render_template("sample_record.html", entity_info=entity_info, sample_instance=sample_instance, details=details, form=form, sample_reocrd_id=sample_record_id)
 
 

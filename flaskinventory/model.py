@@ -219,6 +219,8 @@ class Sample(db.Model):
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     record_no = db.Column(db.String, nullable=False)
     date = db.Column(db.DateTime, default=datetime.datetime.now)
+    movement = db.Column(db.String, nullable=False)
+    
     notes = db.Column(db.Text)
     
     #REF: Customer Info
@@ -229,8 +231,8 @@ class Sample(db.Model):
     
     items = db.relationship("SampleItem", backref='sample')
     
-    def __init__(self, record_no, date, entity_id, staff_id):
-        self.record_no, self.date, self.entity_id, self.staff_id = (record_no, date, entity_id, staff_id)
+    def __init__(self, record_no, date, movement, entity_id, staff_id, notes="N/A"):
+        self.record_no, self.date, self.movement, self.entity_id, self.staff_id, self.notes = (record_no, date, movement, entity_id, staff_id, notes)
 
 class SampleItem(db.Model):
     

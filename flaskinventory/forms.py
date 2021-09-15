@@ -70,7 +70,7 @@ class additem(FlaskForm):
     itemsubmit = SubmitField('Add Item')
     
 class addsale(FlaskForm):
-    invoice_no = StringField('Invoice Number', [validators.DataRequired()])
+    invoice_no = StringField('Sample Number', [validators.DataRequired()])
     date = DateField('Intake Date', format='%Y-%m-%d')
     prem_disc = FloatField('Premium/Discount Percentage')
     wiring_fee = FloatField('Wiring Fee')
@@ -85,7 +85,7 @@ class addsale(FlaskForm):
 
 
 class addsample(FlaskForm):
-    record_no = StringField('Invoice Number', [validators.DataRequired()])
+    record_no = StringField('Record Number', [validators.DataRequired()])
     date = DateField('Intake Date', format='%Y-%m-%d')
     
     entity = SelectField('Customer', choices=[], coerce=int, validate_choice=True)
@@ -93,10 +93,10 @@ class addsample(FlaskForm):
     movement = SelectField(u'Sample Check Out or Sample Return?', choices=[('return', 'return'), ('checked-out', 'checked-out')])
     staff_id = SelectField('Seller/Staff', choices=[], coerce=int, validate_choice=True)
     
-    sample_items = FieldList(FormField(additem), min_entries=1) #https://stackoverflow.com/questions/30121763/how-to-use-a-wtforms-fieldlist-of-formfields
+    # sample_items = FieldList(FormField(additem), min_entries=1) #https://stackoverflow.com/questions/30121763/how-to-use-a-wtforms-fieldlist-of-formfields
     notes = TextField('Notes')
     
-    sampleubmit = SubmitField('Save Sale')
+    samplesubmit = SubmitField('Save Sample')
     
 class addsampleitem(FlaskForm):
     

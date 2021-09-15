@@ -13,7 +13,20 @@ head%}
 {% endblock %} {% block title %} Sale {% endblock %} {% block body %}
 
 <div class="container">
-	<h1>Sale Items</h1>
+	<h1>Sale Record - Invoice Number: {{ sale_instance.invoice_no }}</h1>
+	<h2>Date: {{ sale_instance.date }}</h2>
+	<div>
+		<h2> Customer: {{ entity_info.company_name }} - {{ entity_info.contact_name }} </h2>
+		<h3> Contact Info: </h3>
+		<h4> Email: {{ entity_info.email }}</h4>
+		<h4> Phone: {{ entity_info.phone }}</h4>
+		<h4> Notes on Customer: {{ entity_info.notes }}</h4>
+	</div>
+	<h2>Staff/Seller: {{ staff_info.staff_name }} </h2>
+	<h2>Notes on Sale:</h2>
+	<p> {{ sale_instance.notes }} </p>
+	
+	<p></p>
 	<div>
 		<h3 style="display: inline-block; margin: 0">Sale Items</h3>
 		<button
@@ -122,5 +135,10 @@ head%}
 			{%endfor%}
 		</tbody>
 	</table>
+
+	<h2>Discount/Premium Percentage: {{ sale_instance.prem_disc_percentage }} %</h2>
+	<h2>Wiring Fee: {{ sale_instance.wiring_fee }}</h2>
+
+	
 </div>
 {% endblock %}

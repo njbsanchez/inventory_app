@@ -58,11 +58,18 @@ head%}
 					<div>
 						<h2 class="form-addEntity-heading">Add Sample</h2>
 						{{ form.hidden_tag() }} {{ wtf.form_errors(form, hiddens="only") }}
-						{{ wtf.form_field(form.record_no) }} {{ wtf.form_field(form.date) }} 
+						{{ wtf.form_field(form.record_no) }}
+						{{ wtf.form_field(form.date) }} 
 						<div class="form-group required">
 							<label class="control-label" for="entity">Customer Name</label>
 							<p></p>
 							{{ form.entity }}
+							<p></p>
+						</div>
+						<div class="form-group required">
+							<label class="control-label" for="entity">Sample Check Out or Sample Return?</label>
+							<p></p>
+							{{ form.movement }}
 							<p></p>
 						</div>
 						<div class="form-group required">
@@ -71,9 +78,10 @@ head%}
 							{{ form.staff_id }}
 							<p></p>
 						</div>
+						{{ wtf.form_field(form.notes) }} 
 					</div>
 					<div class="modal-footer">
-						<div>{{ form.sampleubmit(class='btn btn-primary') }}</div>
+						<div>{{ form.samplesubmit(class='btn btn-primary') }}</div>
 						<button
 							type="button"
 							class="btn btn-secondary"
