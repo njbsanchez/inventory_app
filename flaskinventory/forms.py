@@ -90,7 +90,7 @@ class addsample(FlaskForm):
     
     entity = SelectField('Customer', choices=[], coerce=int, validate_choice=True)
     
-    movement = SelectField(u'Sample Check Out or Sample Return?', choices=[('return', 'return'), ('checked-out', 'checked-out')])
+    movement = SelectField(u'Sample Check Out or Sample Return?', choices=[('samplereturn', 'sample return'), ('sampleout', 'sample out')])
     staff_id = SelectField('Seller/Staff', choices=[], coerce=int, validate_choice=True)
     
     # sample_items = FieldList(FormField(additem), min_entries=1) #https://stackoverflow.com/questions/30121763/how-to-use-a-wtforms-fieldlist-of-formfields
