@@ -1,7 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
 import datetime
-import crud
+
 
 db = SQLAlchemy()
 
@@ -26,6 +26,180 @@ def connect_to_db(flask_app, dbname='inventory_psql', echo=False):
     db.init_app(flask_app)
     
     print('Connected to the db!')
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Helper Functions
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def sku_get_intake_quantity(sku):
+    """quantity from intake"""
+
+    return Intake.query.filter(Intake.sku == sku).first()
+
+def sku_get_sale_quantity(sku):
+    """add quantity of all sales"""
+    
+    items_with_sku = Item.query.filter(Item.sku == sku).all()
+    return_data = {"quantity_total": 0, "sale_records":[]}
+    
+    for item in items_with_sku:
+        return_data["quantity_total"] += item.quantity
+        return_data["sale_records"].append(item)
+        
+    return return_data     
+
+def sku_get_sample_quantity(sku):   
+    """add quantity of all samples out"""
+    
+    sampleitems_with_sku = SampleItem.query.filter(SampleItem.sku == sku).all()
+    return_data = {"sampleout":{"quantity_total": 0, "sample_records":[]}, "returned": {"quantity_total": 0, "sample_records":[]}}
+    
+    for sampleitem in sampleitems_with_sku:
+        
+        sample_record = Sample.query.filter(Sale.id == sampleitem.sale_id).first()
+        if sample_record.movement == "sampleout":
+            return_data["sampleout"]["quantity_total"] += sampleitem.quantity
+            return_data["sampleout"]["sample_records"].append(sampleitem.id)
+        if sample_record.movement == "samplereturn":
+            return_data["returned"]["quantity_total"] += sampleitem.quantity
+            return_data["returned"]["sample_records"].append(sampleitem.id)
+
+    return return_data  
+
+def calculate_quantity_instock(sku):
+    """quantity left = intake minus sales, minus samples out, add sample returned"""
+
+    quant_intake = sku_get_intake_quantity(sku)
+    quant_sold = sku_get_sale_quantity(sku)
+    quant_dict = sku_get_sample_quantity(sku)
+    quant_sample_out = quant_dict["sampleout"]
+    quant_sample_returned = quant_dict["returned"]
+    
+    quant_instock = quant_intake - quant_sold["quantity_total"] - quant_sample_out["quantity_total"] + quant_sample_returned["quantity_total"]
+    
+    return quant_instock
+
+# By Product ~~~~~~~~~~~~~~
+
+def prod_get_intake_quantity(product_id):
+    """all intake with given product id"""
+    
+    intake_quant = 0
+    intake_with_id = Intake.query.filter(Intake.product_id == product_id).all()
+    
+    for intake in intake_with_id:
+            intake_quant += intake.quantity
+    
+    return intake_quant
+   
+def prod_get_sale_quantity(product_id):
+    """from sales - add quantity with given product id"""
+
+    sale_quant = 0
+    items_with_id = Item.query.filter(Item.product_id == product_id).all()
+    
+    for item in items_with_id:
+            sale_quant += item.quantity
+    
+    return sale_quant
+    
+def prod_get_sample_quantity(product_id): 
+    """from samples - add quantity with given product id"""
+
+    sampleitems_with_id = SampleItem.query.filter(SampleItem.product_id == product_id).all()
+    return_data = {"sampleout":{"quantity_total": 0, "sample_records":[]}, "returned": {"quantity_total": 0, "sample_records":[]}}
+    
+    for sampleitem in sampleitems_with_id:
+        
+        sample_record = Sample.query.filter(Sale.id == sampleitem.sale_id).first()
+        if sample_record.movement == "sampleout":
+            return_data["sampleout"]["quantity_total"] += sampleitem.quantity
+            return_data["sampleout"]["sample_records"].append(sampleitem.sample_record_id)
+        if sample_record.movement == "samplereturn":
+            return_data["returned"]["quantity_total"] += sampleitem.quantity
+            return_data["returned"]["sample_records"].append(sampleitem.sample_record_id)
+
+    return return_data  
+
+def prod_calculate_quantity_instock(product_id):
+    """quantity left = intake minus sales, minus samples out, add sample returned"""
+
+    quant_intake = prod_get_intake_quantity(product_id)
+    quant_sold = prod_get_sale_quantity(product_id)
+    quant_dict = prod_get_sample_quantity(product_id)
+    quant_sample_out = quant_dict["sampleout"]
+    quant_sample_returned = quant_dict["returned"]
+    
+    quant_instock = quant_intake - quant_sold["quantity_total"] - quant_sample_out["quantity_total"] + quant_sample_returned["quantity_total"]
+    
+    return quant_instock
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~           
+# Money Calculations
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# Item Instance Calc ~~~~~~~~~~~~~~
+    
+def calc_sub_total(quantity, item_instance):
+    
+    sub_total = quantity * item_instance.intake_instance.selling_price
+
+def calc_cogs(quantity, item_instance):
+    
+    cost_per_unit = item_instance.intake_instance.cost_per_unit
+    licensing_per_unit = item_instance.intake_instance.licensing_fee
+    
+    cogs_of_item = quantity * (cost_per_unit + licensing_per_unit)
+    
+    return cogs_of_item
+
+# Sale Instance Calc ~~~~~~~~~~~~~~
+
+def add_subtotals(sale_id):
+    """
+    - query for items with sale_id
+    - loop through items
+        - using item.quantity and item.quantity"""
+    
+    subtotal_dict = {}
+    total = 0
+    
+    sale_instance = Sale.query.filter(Sale.id == sale_id).first()
+    
+    for i, item in enumerate(sale_instance.items, 1):
+        price = item.intake_instance.selling_price
+        quantity = item.quantity
+        sub_total = item.subtotal
+        subtotal_dict[(i, item)] = (price, quantity, sub_total)
+        total += sub_total
+        
+    subtotal_data = {"total": total, "sub_dict": subtotal_dict}
+        
+    return subtotal_data
+
+def get_items_cogs(sale_id):
+    """
+    - query for items with sale_id
+    - loop through items
+        - using item.quantity and item.quantity"""
+    
+    cogs_dict = {}
+    total_cogs = 0
+    
+    sale_instance = Sale.query.filter(Sale.id == sale_id).first()
+    
+    for i, item in enumerate(sale_instance.items, 1):
+        cost_per_unit = item.intake_instance.cost_per_unit
+        quantity = item.quantity
+        item_cogs = item.cogs
+        cogs_dict[(i, item)] = (cost_per_unit, quantity, item_cogs)
+        total_cogs += item_cogs
+        
+    cogs_data = {"total": total_cogs, "cogs_dict": cogs_dict}
+        
+    return cogs_data
+
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # People models
@@ -73,8 +247,8 @@ class Entity(db.Model):
     phone = db.Column(db.String)
     notes = db.Column(db.Text)
     
-    supplier = db.relationship("Intake", backref='entity')
-    customer = db.relationship("Sale", backref='entity')
+    suppliers = db.relationship("Intake", backref='entity')
+    sales = db.relationship("Sale", backref='entity')
     
     def __repr__(self):
         return f'< Contact = {self.contact_name} Company = {self.company_name} >'
@@ -134,7 +308,7 @@ class Intake(db.Model):
     
     #REF: Staff Info
     staff_id = db.Column(db.Integer(), db.ForeignKey(Staff.id))
-    
+    items = db.relationship("Item", backref='seller_broker')
 
     def __repr__(self):
         return f'< Product name = {self.product_id} SKU = {self.sku} >'
@@ -180,16 +354,18 @@ class Sale(db.Model):
     #REF: Staff Info
     staff_id = db.Column(db.Integer(), db.ForeignKey(Staff.id))
     broker_fee = db.Column(db.Float(10), nullable=False)
+    broker_fee_paid = db.Column(db.Boolean, nullable=False, default=False)
     
     notes = db.Column(db.Text)
     
     items = db.relationship("Item", backref='sale')
     
+    
     # def __repr__(self):
     #     return f'<Customer = {self.name} Invoice = {self.invoice_no} Date = {self.date} >'
     
-    def __init__(self, invoice_no, date,  prem_disc_percentage, wiring_fee, entity_id, staff_id, broker_fee, notes="N/A"):
-        self.invoice_no,self.date, self.prem_disc_percentage, self.wiring_fee, self.entity_id, self.staff_id, self.broker_fee, self.notes = (invoice_no, date, prem_disc_percentage, wiring_fee, entity_id, staff_id, broker_fee, notes)
+    def __init__(self, invoice_no, date,  prem_disc_percentage, wiring_fee, entity_id, staff_id, broker_fee, broker_fee_paid, notes="N/A"):
+        self.invoice_no,self.date, self.prem_disc_percentage, self.wiring_fee, self.entity_id, self.staff_id, self.broker_fee, self.broker_fee_paid, self.notes = (invoice_no, date, prem_disc_percentage, wiring_fee, entity_id, staff_id, broker_fee, broker_fee_paid, notes)
     
     def get_cart(self):
         """returns all cart items from given sale"""
@@ -220,10 +396,10 @@ class Item(db.Model):
         self.product_id, self.sku, self.quantity, self.sale_id, self.notes, self.cogs, self.subtotal = (product_id, sku, quantity, sale_id, notes, cogs, subtotal)
     
     def calculate_cogs(self):
-        return crud.calc_cogs(self.quantity, self)
+        return calc_cogs(self.quantity, self)
 
     def calculate_subtotal(self):
-        return crud.calc_sub_total(self.quantity, self)
+        return calc_sub_total(self.quantity, self)
 
 class Sample(db.Model):
     """TO DO"""

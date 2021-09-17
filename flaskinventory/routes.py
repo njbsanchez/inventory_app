@@ -22,10 +22,16 @@ def login():
         user = User.query.filter_by(username=form.username.data).first()
         if user:
             if user.password == form.password.data:
-                return redirect(url_for('show_staff'))
+                return redirect(url_for('go_home'))
 
         return '<h1> Username or Password is incorrect. <h1>'
     return render_template("login.html", form=form)
+
+
+@app.route("/")
+def go_home():
+    """dummy development page"""
+    return render_template("home.html")
 
 
 @app.route("/admin_new_user", methods=['GET', 'POST'])

@@ -1,8 +1,5 @@
-from _typeshed import OpenTextModeUpdating
-from inventory.flaskinventory.routes import coming_soon, show_sales
-from flaskinventory.forms import AddStaff, AddEntity, addproduct, addintake, LoginForm, RegisterForm, additem, addsample, addsampleitem
-from flaskinventory.model import db, User, Staff, Entity, Product, Intake, Sale, Item, Sample, SampleItem
-from flaskinventory.app import app
+from model import db, Intake, Sale, Item, Sample, SampleItem
+from app import app
 import sqlalchemy.exc as sq
 
 
@@ -151,7 +148,7 @@ def add_subtotals(sale_id):
     for i, item in enumerate(sale_instance.items, 1):
         price = item.intake_instance.selling_price
         quantity = item.quantity
-        sub_total = calc_sub_total(quantity, item)
+        sub_total = item.subtotal
         subtotal_dict[(i, item)] = (price, quantity, sub_total)
         total += sub_total
         
@@ -173,7 +170,7 @@ def get_items_cogs(sale_id):
     for i, item in enumerate(sale_instance.items, 1):
         cost_per_unit = item.intake_instance.cost_per_unit
         quantity = item.quantity
-        item_cogs = calc_cogs(quantity, item)
+        item_cogs = item.cogs
         cogs_dict[(i, item)] = (cost_per_unit, quantity, item_cogs)
         total_cogs += item_cogs
         
@@ -181,4 +178,24 @@ def get_items_cogs(sale_id):
         
     return cogs_data
 
-def get_sale_
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~           
+# Broker Calculations
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def broker_pay_out(broker):
+    broker_dict = {"fee_total": 0, "fee_paid": 0, "fee_unpaid": 0}
+    sales_list = broker.sales
+    for sale_instance in sales_list:
+        broker_dict["fee_total"] += sale_instance.broker_fee
+        if sale_instance.broker_fee_paid == False:
+            broker_dict["fee_unpaid"] += sale_instance.broker_fee
+        elif sale_instance.broker_fee_paid == True:
+            broker_dict["fee_paid"] += sale_instance.broker_fee
+    print( broker_dict["fee_total"] == broker_dict["fee_unpaid"] + broker_dict["fee_paid"])
+    
+    return broker_dict
+
+def sale_by_broker(broker):
+     Entity.query.filter(Entity.id = broker.id).first()

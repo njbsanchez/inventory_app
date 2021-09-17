@@ -79,6 +79,7 @@ class addsale(FlaskForm):
     
     staff_id = SelectField('Staff/Sales Associate', choices=[], coerce=int, option_widget=None, validate_choice=True)
     broker_fee = FloatField('Broker Fee')
+    broker_fee_paid = BooleanField('Has Broker Fee been paid out?')
     notes = TextField('Notes')
     
     salesubmit = SubmitField('Proceed to Add Items')

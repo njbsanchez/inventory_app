@@ -76,6 +76,12 @@ head%}
 							<p></p>
 						</div>
 						{{ wtf.form_field(form.broker_fee) }}
+						<div class="form-group required">
+							<label class="control-label" for="staff">Has Broker Fee been paid out?</label>
+							<p></p>
+							{{ form.broker_fee_paid }}
+							<p></p>
+						</div>
 					</div>
 					<div class="modal-footer">
 						<div>{{ form.salesubmit(class='btn btn-primary') }}</div>
