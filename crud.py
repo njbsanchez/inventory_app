@@ -5,6 +5,7 @@ from flaskinventory.model import db, User, Staff, Entity, Product, Intake, Sale,
 from flaskinventory.app import app
 import sqlalchemy.exc as sq
 
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~           
 # Inventory calculations
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -45,7 +46,6 @@ def sku_get_sample_quantity(sku):
             return_data["returned"]["sample_records"].append(sampleitem.id)
 
     return return_data  
-
 
 def calculate_quantity_instock(sku):
     """quantity left = intake minus sales, minus samples out, add sample returned"""
@@ -120,11 +120,65 @@ def prod_calculate_quantity_instock(product_id):
 # Money Calculations
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-# Sale ~~~~~~~~~~~~~~
+# Item Instance Calc ~~~~~~~~~~~~~~
+    
+def calc_sub_total(quantity, item_instance):
+    
+    sub_total = quantity * item_instance.intake_instance.selling_price
 
-    # calculate sub_total
-    # quantity x intake.selling_price = subtotal
+def calc_cogs(quantity, item_instance):
+    
+    cost_per_unit = item_instance.intake_instance.cost_per_unit
+    licensing_per_unit = item_instance.intake_instance.licensing_fee
+    
+    cogs_of_item = quantity * (cost_per_unit + licensing_per_unit)
+    
+    return cogs_of_item
 
-    # calculate cogs
-    # quantity x intake.cost_per_unit = cogs_sub_total
+# Sale Instance Calc ~~~~~~~~~~~~~~
 
+def add_subtotals(sale_id):
+    """
+    - query for items with sale_id
+    - loop through items
+        - using item.quantity and item.quantity"""
+    
+    subtotal_dict = {}
+    total = 0
+    
+    sale_instance = Sale.query.filter(Sale.id == sale_id).first()
+    
+    for i, item in enumerate(sale_instance.items, 1):
+        price = item.intake_instance.selling_price
+        quantity = item.quantity
+        sub_total = calc_sub_total(quantity, item)
+        subtotal_dict[(i, item)] = (price, quantity, sub_total)
+        total += sub_total
+        
+    subtotal_data = {"total": total, "sub_dict": subtotal_dict}
+        
+    return subtotal_data
+
+def get_items_cogs(sale_id):
+    """
+    - query for items with sale_id
+    - loop through items
+        - using item.quantity and item.quantity"""
+    
+    cogs_dict = {}
+    total_cogs = 0
+    
+    sale_instance = Sale.query.filter(Sale.id == sale_id).first()
+    
+    for i, item in enumerate(sale_instance.items, 1):
+        cost_per_unit = item.intake_instance.cost_per_unit
+        quantity = item.quantity
+        item_cogs = calc_cogs(quantity, item)
+        cogs_dict[(i, item)] = (cost_per_unit, quantity, item_cogs)
+        total_cogs += item_cogs
+        
+    cogs_data = {"total": total_cogs, "cogs_dict": cogs_dict}
+        
+    return cogs_data
+
+def get_sale_

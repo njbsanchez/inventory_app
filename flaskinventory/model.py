@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
 import datetime
+import crud
 
 db = SQLAlchemy()
 
@@ -131,8 +132,6 @@ class Intake(db.Model):
     licensing_fee = db.Column(db.Float(10), nullable=False)
     entity_id = db.Column(db.Integer(), db.ForeignKey(Entity.id))
     
-    sale_instance = db.relationship("Item", backref='variant')
-    
     #REF: Staff Info
     staff_id = db.Column(db.Integer(), db.ForeignKey(Staff.id))
     
@@ -206,13 +205,26 @@ class Item(db.Model):
     quantity = db.Column(db.Integer(), nullable = False)
     
     notes = db.Column(db.Text)
+    
+    cogs = db.Column(db.Integer())
+    subtotal = db.Column(db.Integer())
 
     #REF: Sale Info
     sale_id = db.Column(db.Integer(), db.ForeignKey(Sale.id))
+    intake_instance = db.relationship("Intake", backref='sale_items')
+    
 
     def __init__(self, product_id, sku, quantity, sale_id, notes="N/A"):
-        self.product_id, self.sku, self.quantity, self.sale_id, self.notes = (product_id, sku, quantity, sale_id, notes)
+        cogs = self.calculate_cogs()
+        subtotal = self.calculate_subtotal()
+        self.product_id, self.sku, self.quantity, self.sale_id, self.notes, self.cogs, self.subtotal = (product_id, sku, quantity, sale_id, notes, cogs, subtotal)
     
+    def calculate_cogs(self):
+        return crud.calc_cogs(self.quantity, self)
+
+    def calculate_subtotal(self):
+        return crud.calc_sub_total(self.quantity, self)
+
 class Sample(db.Model):
     """TO DO"""
     
