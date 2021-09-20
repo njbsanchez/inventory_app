@@ -8,6 +8,7 @@ from flask_bootstrap import Bootstrap
 from flask_wtf import form
 import time
 import datetime
+import flaskinventory.crud as crud
 import sqlalchemy.exc as sq
 
 bootstrap = Bootstrap(app)
@@ -31,7 +32,14 @@ def login():
 @app.route("/")
 def go_home():
     """dummy development page"""
-    return render_template("home.html")
+    
+    latest_sales = Sale.query.order_by(Sale.id.desc()).limit(5)
+    
+    
+    latest_intakes = Intake.query.order_by(Intake.date.desc()).limit(5)
+    broker_info = crud.outstanding_broker_fees()
+    
+    return render_template("home.html", latest_sales=latest_sales, latest_intakes=latest_intakes, broker_info=broker_info)
 
 
 @app.route("/admin_new_user", methods=['GET', 'POST'])
@@ -238,7 +246,8 @@ def show_sales():
                           wiring_fee=form.wiring_fee.data,
                           entity_id=form.entity.data,
                           staff_id=form.staff_id.data,
-                          broker_fee=form.broker_fee.data
+                          broker_fee=form.broker_fee.data,
+                          broker_fee_paid=form.broker_fee_paid.data
                           )
                           
         print(new_sale)
@@ -271,7 +280,7 @@ def show_sale_record(sale_id):
     form.product_id.choices = [(product.id, product.product_name)
                                  for product in Product.query.all()]
     
-    form.sku.choices = [(intake.sku)
+    form.sku.choices = [(intake.id, intake.sku)
                                  for intake in Intake.query.all()]
     
     if exists == False and request.method == 'GET':
@@ -282,7 +291,7 @@ def show_sale_record(sale_id):
         # return '<h1>' + form.product_id.data + form.sku.data + ' ' + form.init_unitcount.data + ' ' +  form.supplier.data + ' ' +  '</h1>'
         
         new_item = Item(product_id=form.product_id.data,
-                        sku=form.sku.data,
+                        intake_id=form.sku.data,
                         quantity=form.quantity.data,
                         sale_id=sale_id
                         )

@@ -1,127 +1,150 @@
 <!DOCTYPE html>
-{% extends "base.html" %} {% import "bootstrap/wtf.html" as wtf %} {% block head
-%}
-<style></style>
-{% endblock %} {% block title %} Staff Management {% endblock %} {% block body
-%}
+{% extends "base.html" %} {% import "bootstrap/wtf.html" as wtf %}
 
-<div class="container">
-	<h1>Intake</h1>
-	<div>
-		<h3 style="display: inline-block; margin: 0">Add Intake.</h3>
-		<button
-			type="button"
-			class="btn btn-add"
-			data-toggle="modal"
-			data-target="#exampleModal"
+<head>
+	{% block title %} Intake {% endblock %}
+</head>
+<header></header>
+<body>
+	{% block body%}
+
+	<style></style>
+	<script src="/static/js/modals.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+	<link
+		rel="stylesheet"
+		href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+	/>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+	<div class="container">
+		<h1>Intake</h1>
+		<div>
+			<h3 style="display: inline-block; margin: 0">Add Intake</h3>
+			<button
+				type="button"
+				class="btn btn-add"
+				data-toggle="modal"
+				data-target="#exampleModal"
+			>
+				<span class="btn-icon-add"
+					><i class="glyphicon glyphicon-plus"></i></span
+				>Add Intake
+			</button>
+		</div>
+
+		<!-- add Modal code here-->
+		<div
+			class="modal fade"
+			id="exampleModal"
+			tabindex="-1"
+			role="dialog"
+			aria-labelledby="exampleModalLabel"
+			aria-hidden="true"
+			style="margin-top: 10px"
 		>
-			<span class="btn-icon-add"><i class="glyphicon glyphicon-plus"></i></span
-			>Add Intake
-		</button>
-	</div>
-
-	<!-- add Modal code here-->
-	<div
-		class="modal fade"
-		id="exampleModal"
-		tabindex="-1"
-		role="dialog"
-		aria-labelledby="exampleModalLabel"
-		aria-hidden="true"
-		style="margin-top: 150px"
-	>
-		<div class="modal-dialog" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h3 class="modal-title" id="exampleModalLabel">Add Intake</h3>
-					<button
-						type="button"
-						class="close"
-						data-dismiss="modal"
-						aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h3 class="modal-title" id="exampleModalLabel">Add Intake</h3>
+						<button
+							type="button"
+							class="close"
+							data-dismiss="modal"
+							aria-label="Close"
+						>
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<form
+						class="form-addeintake form form-horizontal"
+						method="post"
+						role="form"
+					>
+						<div class="container-fluid">
+							{{ form.hidden_tag() }} {{ wtf.form_errors(form, hiddens="only")
+							}} {{ wtf.form_field(form.date) }}
+							<div class="form-group required">
+								<label class="control-label" for="product_id"
+									>Product Name</label
+								>
+								<p></p>
+								{{ form.product_id }}
+								<p></p>
+							</div>
+							{{ form.hidden_tag() }} {{ wtf.form_field(form.sku) }} {{
+							wtf.form_field(form.selling_price) }} {{
+							wtf.form_field(form.notes)}} {{
+							wtf.form_field(form.init_unitcount) }} {{
+							wtf.form_field(form.cost_perunit) }} {{
+							wtf.form_field(form.licensingfee) }}
+							<div class="form-group required">
+								<label class="control-label" for="supplier"
+									>Supplier Contact Name</label
+								>
+								<p></p>
+								{{ form.supplier }}
+								<p></p>
+							</div>
+							<div clas <div class="form-group required">
+								<label class="control-label" for="staff_id"
+									>Staff/Broker Name</label
+								>
+								<p></p>
+								{{ form.staff_id }}
+								<p></p>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button
+								type="button"
+								class="btn btn-secondary"
+								data-dismiss="modal"
+							>
+								Close
+							</button>
+							<div>{{ form.intakesubmit(class="btn btn-primary") }}</div>
+						</div>
+					</form>
 				</div>
-				<form class="form-addentity form form-horizontal" method="post" role="form">
-					<div>
-						<h2 class="form-addEntity-heading">Add Intake</h2>
-						{{ form.hidden_tag() }}
-						{{ wtf.form_errors(form, hiddens="only") }}
-						{{ wtf.form_field(form.date) }}
-						<div class="form-group required">
-							<label class="control-label" for="product_id">Product Name</label>
-							<p></p>
-							{{ form.product_id }}
-							<p></p>
-						</div>
-						{{ form.hidden_tag() }} 
-						{{ wtf.form_field(form.sku) }} 
-						{{ wtf.form_field(form.selling_price) }}
-						{{ wtf.form_field(form.notes)}} 
-						{{ wtf.form_field(form.init_unitcount) }} 
-						{{ wtf.form_field(form.cost_perunit) }} 
-						{{ wtf.form_field(form.licensingfee) }}
-						<div class="form-group required">
-							<label class="control-label" for="supplier"
-								>Supplier Contact Name</label
-							>
-							<p></p>
-							{{ form.supplier }}
-							<p></p>
-						</div>
-						<div clas
-						<div class="form-group required">
-							<label class="control-label" for="staff_id"
-								>Staff/Broker Name</label
-							>
-							<p></p>
-							{{ form.staff_id }}
-							<p></p>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-						<div>{{ form.intakesubmit(class="btn btn-primary") }}</div>
-					</div>
-				</form>
 			</div>
 		</div>
-	</div>
-	<!--end of modal design-->
+		<!--end of modal design-->
 
-	<table class="table table-hover">
-		<thead>
-			<tr>
-				<th>Date</th>
-				<th>SKU</th>
-				<th>Initial Unit Count</th>
-				<th>Cost per Unit</th>
-				<th>Selling Price</th>
-			</tr>
-		</thead>
-		<tbody>
-			{% for p in details %}
-			<tr>
-				<td>{{p.date}}</td>
-				<td>{{p.sku}}</td>
-				<td>{{p.initial_unit_count}}</td>
-				<td>{{p.cost_per_unit}}</td>
-				<td>{{p.selling_price}}</td>
-				<td>
-					<button
-						type="button"
-						class="btn btn-edit"
-						data-toggle="modal"
-						data-target="#edit{{p.sku}}"
-					>
-						<span class="btn-icon"
-							><i class="glyphicon glyphicon-pencil"></i></span
-						>Edit
-					</button>
-				</td>
-			</tr>
-			{%endfor%}
-		</tbody>
-	</table>
-</div>
-{% endblock %}
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th>Date</th>
+					<th>SKU</th>
+					<th>Initial Unit Count</th>
+					<th>Cost per Unit</th>
+					<th>Selling Price</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for p in details %}
+				<tr>
+					<td>{{p.date}}</td>
+					<td>{{p.sku}}</td>
+					<td>{{p.initial_unit_count}}</td>
+					<td>{{p.cost_per_unit}}</td>
+					<td>{{p.selling_price}}</td>
+					<td>
+						<button
+							type="button"
+							class="btn btn-edit"
+							data-toggle="modal"
+							data-target="#edit{{p.sku}}"
+						>
+							<span class="btn-icon"
+								><i class="glyphicon glyphicon-pencil"></i></span
+							>Edit
+						</button>
+					</td>
+				</tr>
+				{%endfor%}
+			</tbody>
+		</table>
+	</div>
+	{% endblock %}
+</body>

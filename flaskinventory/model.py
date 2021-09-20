@@ -3,6 +3,7 @@ from flask_bootstrap import Bootstrap
 import datetime
 
 
+
 db = SQLAlchemy()
 
 def connect_to_db(flask_app, dbname='inventory_psql', echo=False):  
@@ -140,10 +141,22 @@ def prod_calculate_quantity_instock(product_id):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # Item Instance Calc ~~~~~~~~~~~~~~
-    
+
 def calc_sub_total(quantity, item_instance):
     
-    sub_total = quantity * item_instance.intake_instance.selling_price
+    prem_disc = item_instance.sale.prem_disc_percentage
+    prem_disc = (100 + prem_disc) / 100
+    new_price = item_instance.intake_instance.selling_price *  prem_disc
+    
+    print("premium or discount: ", prem_disc)
+    print("quantity: ", quantity)
+    print("new price per item: ", new_price)
+    
+    sub_total = quantity * new_price
+
+    print("subtotal: ", sub_total)
+
+    return sub_total
 
 def calc_cogs(quantity, item_instance):
     
@@ -153,52 +166,6 @@ def calc_cogs(quantity, item_instance):
     cogs_of_item = quantity * (cost_per_unit + licensing_per_unit)
     
     return cogs_of_item
-
-# Sale Instance Calc ~~~~~~~~~~~~~~
-
-def add_subtotals(sale_id):
-    """
-    - query for items with sale_id
-    - loop through items
-        - using item.quantity and item.quantity"""
-    
-    subtotal_dict = {}
-    total = 0
-    
-    sale_instance = Sale.query.filter(Sale.id == sale_id).first()
-    
-    for i, item in enumerate(sale_instance.items, 1):
-        price = item.intake_instance.selling_price
-        quantity = item.quantity
-        sub_total = item.subtotal
-        subtotal_dict[(i, item)] = (price, quantity, sub_total)
-        total += sub_total
-        
-    subtotal_data = {"total": total, "sub_dict": subtotal_dict}
-        
-    return subtotal_data
-
-def get_items_cogs(sale_id):
-    """
-    - query for items with sale_id
-    - loop through items
-        - using item.quantity and item.quantity"""
-    
-    cogs_dict = {}
-    total_cogs = 0
-    
-    sale_instance = Sale.query.filter(Sale.id == sale_id).first()
-    
-    for i, item in enumerate(sale_instance.items, 1):
-        cost_per_unit = item.intake_instance.cost_per_unit
-        quantity = item.quantity
-        item_cogs = item.cogs
-        cogs_dict[(i, item)] = (cost_per_unit, quantity, item_cogs)
-        total_cogs += item_cogs
-        
-    cogs_data = {"total": total_cogs, "cogs_dict": cogs_dict}
-        
-    return cogs_data
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -277,11 +244,12 @@ class Product(db.Model):
     product_name = db.Column(db.String(255), unique=True)
     description = db.Column(db.Text)
     
-    variants = db.relationship("Intake", backref='product')
-    
+    intake_variants = db.relationship("Intake", backref='product')
+    sale_items = db.relationship("Item", backref='product')
+    sample_items = db.relationship("SampleItem", backref='product')
     
     def __repr__(self):
-        return f'<Product ID = {self.id} Product name = {self.name} >'
+        return f'{self.product_name}'
 
     def __init__(self, name, description="N/A"):
         self.product_name, self.description = (name, description)            
@@ -289,14 +257,15 @@ class Product(db.Model):
 class Intake(db.Model):
     """A lower-level category of product, identified by sku."""
     
-    
     date = db.Column(db.Date, nullable=False)
     
      # REF: Product table
     product_id = db.Column(db.Integer(), db.ForeignKey(Product.id), nullable=False)
     
     # REF: Product Info
-    sku = db.Column(db.String(12), primary_key=True, nullable=False)
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    
+    sku = db.Column(db.String(12), nullable=False)
     selling_price = db.Column(db.Float(10), nullable=False)
     notes = db.Column(db.Text)
     
@@ -308,10 +277,11 @@ class Intake(db.Model):
     
     #REF: Staff Info
     staff_id = db.Column(db.Integer(), db.ForeignKey(Staff.id))
-    items = db.relationship("Item", backref='seller_broker')
+    items = db.relationship("Item", backref='intake_instance')
+    sample_items = db.relationship("SampleItem", backref='intake_instance')
 
     def __repr__(self):
-        return f'< Product name = {self.product_id} SKU = {self.sku} >'
+        return f'{self.sku}'
 
     def __init__(self, date, sku, product_id, selling_price, initial_unit_count, cost_per_unit, licensing_fee, entity_id, staff_id, notes="N/A"):
         self.date, self.sku, self.product_id, self.selling_price, self.initial_unit_count, self.cost_per_unit, self.licensing_fee, self.entity_id, self.staff_id, self.notes = (date, sku, product_id, selling_price, initial_unit_count, cost_per_unit, licensing_fee, entity_id, staff_id, notes)
@@ -354,7 +324,7 @@ class Sale(db.Model):
     #REF: Staff Info
     staff_id = db.Column(db.Integer(), db.ForeignKey(Staff.id))
     broker_fee = db.Column(db.Float(10), nullable=False)
-    broker_fee_paid = db.Column(db.Boolean, nullable=False, default=False)
+    broker_fee_paid = db.Column(db.Boolean, default=False)
     
     notes = db.Column(db.Text)
     
@@ -367,17 +337,38 @@ class Sale(db.Model):
     def __init__(self, invoice_no, date,  prem_disc_percentage, wiring_fee, entity_id, staff_id, broker_fee, broker_fee_paid, notes="N/A"):
         self.invoice_no,self.date, self.prem_disc_percentage, self.wiring_fee, self.entity_id, self.staff_id, self.broker_fee, self.broker_fee_paid, self.notes = (invoice_no, date, prem_disc_percentage, wiring_fee, entity_id, staff_id, broker_fee, broker_fee_paid, notes)
     
-    def get_cart(self):
-        """returns all cart items from given sale"""
+    def get_cogs_sum(self):
+        """internal - returns cog sum of all cart items from given sale"""
         
-        return Item.query.filter(Item.sale_id==self.id).all()
-
+        cog_sum = 0
+        for item in self.items:
+            cog_sum += item.cogs
+        
+        return cog_sum 
+    
+    def get_subtotal_sum(self):
+        """external - sum of all item total"""
+        
+        sub_sum = 0
+        for item in self.items:
+            sub_sum += item.subtotal
+        
+        return sub_sum
+            
+    def get_receipt_total(self):
+        """internal - return total receipt amount to be charged to client"""
+        
+        sub = self.get_subtotal_sum()
+        
+        return sub + self.wiring_fee
+        
+    
 class Item(db.Model):
     
     #Item info
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     product_id = db.Column(db.Integer(), db.ForeignKey(Product.id), nullable=False)
-    sku = db.Column(db.String(), db.ForeignKey(Intake.sku))
+    intake_id = db.Column(db.Integer(), db.ForeignKey(Intake.id))
     quantity = db.Column(db.Integer(), nullable = False)
     
     notes = db.Column(db.Text)
@@ -387,19 +378,41 @@ class Item(db.Model):
 
     #REF: Sale Info
     sale_id = db.Column(db.Integer(), db.ForeignKey(Sale.id))
-    intake_instance = db.relationship("Intake", backref='sale_items')
     
+    def __repr__(self):
+        return f'SKU { self.intake_instance } ({ self.product })'
 
-    def __init__(self, product_id, sku, quantity, sale_id, notes="N/A"):
-        cogs = self.calculate_cogs()
-        subtotal = self.calculate_subtotal()
-        self.product_id, self.sku, self.quantity, self.sale_id, self.notes, self.cogs, self.subtotal = (product_id, sku, quantity, sale_id, notes, cogs, subtotal)
+    def __init__(self, product_id, intake_id, quantity, sale_id, notes="N/A"):
+        cogs = self.calculate_item_cogs(quantity, intake_id)
+        subtotal = self.calculate_subtotal(quantity, intake_id, sale_id)
+        self.product_id, self.intake_id, self.quantity, self.sale_id, self.notes, self.cogs, self.subtotal, self.notes= (product_id, intake_id, quantity, sale_id, notes, cogs, subtotal, notes)
     
-    def calculate_cogs(self):
-        return calc_cogs(self.quantity, self)
+    def calculate_item_cogs(self, quantity, intake_id):
+        
+        intake_instance = Intake.query.filter(Intake.id == intake_id).first()
+        
+        cost_per_unit = intake_instance.cost_per_unit
+        
+        print(cost_per_unit)
+        
+        licensing_per_unit = intake_instance.licensing_fee
+        
+        cogs_of_item = quantity * (cost_per_unit + licensing_per_unit)
+        
+        return cogs_of_item
+    
+        
+    def calculate_subtotal(self, quantity, intake_id, sale_id):
 
-    def calculate_subtotal(self):
-        return calc_sub_total(self.quantity, self)
+        intake_instance = Intake.query.filter(Intake.id == intake_id).first()
+        sale_instance = Sale.query.filter(Sale.id == sale_id).first()
+        
+        prem_disc = (100 + sale_instance.prem_disc_percentage) / 100
+        new_price = intake_instance.selling_price *  prem_disc
+        
+        sub_total = quantity * new_price
+        
+        return sub_total
 
 class Sample(db.Model):
     """TO DO"""
@@ -427,20 +440,24 @@ class SampleItem(db.Model):
     #Item info
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     product_id = db.Column(db.Integer(), db.ForeignKey(Product.id), nullable=False)
-    sku = db.Column(db.String(), db.ForeignKey(Intake.sku))
+    intake_id = db.Column(db.Integer(), db.ForeignKey(Intake.id))
     quantity = db.Column(db.Integer(), nullable = False)
     notes = db.Column(db.Text)
 
     #REF: Sale Info
     sample_record_id = db.Column(db.Integer(), db.ForeignKey(Sample.id))
 
-    def __init__(self, product_id, sku, quantity, sample_record_id, notes="N/A"):
-        self.product_id, self.sku, self.quantity, self.sample_record_id, self.notes = (product_id, sku, quantity, sample_record_id, notes)
+    def __repr__(self):
+        return f'SKU { self.sku } ({ self.product })'
+
+    def __init__(self, product_id, intake_id, quantity, sample_record_id, notes="N/A"):
+        self.product_id, self.intake_id, self.quantity, self.sample_record_id, self.notes = (product_id, intake_id, quantity, sample_record_id, notes)
 
 def get_sale_by_id(id):
     """Return sale with given ID."""
     
     return Sale.query.filter(Sale.id==id).first()
+
 def get_sale_by_invoice(invoice_no):
     """Return sale with given invoice number."""
     

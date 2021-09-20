@@ -24,7 +24,7 @@ head%}
 	</div>
 	<h2>Staff/Seller: {{ staff_info.staff_name }} </h2>
 	<h2>Notes on Sale:</h2>
-	<p> {{ sale_instance.notes }} </p>
+	<p> Discount/Premium Percentage applied to all items: {{ sale_instance.prem_disc_percentage }} % </h2> </p>
 	
 	<p></p>
 	<div>
@@ -36,7 +36,7 @@ head%}
 			data-target="#saleModal1"
 		>
 			<span class="btn-icon-add"><i class="glyphicon glyphicon-plus"></i></span
-			>Add Sale
+			>Add Item to Sale Record
 		</button>
 	</div>
 
@@ -53,7 +53,7 @@ head%}
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h3 class="modal-title" id="exampleModalLabel">Add Sale</h3>
+					<h3 class="modal-title" id="exampleModalLabel">Add Sale Item</h3>
 					<button
 						type="button"
 						class="close"
@@ -106,7 +106,7 @@ head%}
 			<tr>
 				<th>SKU</th>
 				<th>Product</th>
-				<th>Price Per Unit</th>
+				<th>Price Per Unit (inclusive of Disc/Prem)</th>
 				<th>Quantity</th>
 				<th>Item Sub-Total</th>
 			</tr>
@@ -114,11 +114,11 @@ head%}
 		<tbody>
 			{% for p in details %}
 			<tr>
-				<td>{{p.sku}}</td>
-				<td>[CHANGE TO PRODUCT NAME] {{p.product_id}}</td>
-				<td>[GET PRICE FROM INTAKE]</td>
-				<td>{{p.quantity}}</td>
-				<td>[GET SUB TOTAL OF ALL]</td>
+				<td>{{ p.intake_instance.sku }}</td>
+				<td>{{ p.product.product_name }}</td>
+				<td>{{ p.intake_instance.selling_price * ((100 + sale_instance.prem_disc_percentage) / 100) }}</td>
+				<td>{{ p.quantity }}</td>
+				<td>{{ p.subtotal }}</td>
 				<td>
 					<button
 						type="button"
@@ -135,9 +135,11 @@ head%}
 			{%endfor%}
 		</tbody>
 	</table>
-
-	<h2>Discount/Premium Percentage: {{ sale_instance.prem_disc_percentage }} %</h2>
+	<p></p>
+	<p></p>
+	<h2>Item Sub-total: {{ sale_instance.get_subtotal_sum() }}</h2>
 	<h2>Wiring Fee: {{ sale_instance.wiring_fee }}</h2>
+	<h1>Total: {{ sale_instance.get_receipt_total() }} </h1>
 
 	
 </div>

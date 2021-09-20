@@ -1,5 +1,5 @@
-from model import db, Intake, Sale, Item, Sample, SampleItem
-from app import app
+from flaskinventory.model import db, Intake, Sale, Item, Sample, SampleItem, Entity, Staff
+from flaskinventory.app import app
 import sqlalchemy.exc as sq
 
 
@@ -185,6 +185,7 @@ def get_items_cogs(sale_id):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def broker_pay_out(broker):
+    
     broker_dict = {"fee_total": 0, "fee_paid": 0, "fee_unpaid": 0}
     sales_list = broker.sales
     for sale_instance in sales_list:
@@ -197,5 +198,15 @@ def broker_pay_out(broker):
     
     return broker_dict
 
-def sale_by_broker(broker):
-     Entity.query.filter(Entity.id = broker.id).first()
+def outstanding_broker_fees():
+    
+    broker_dict = {}
+    brokers = Staff.query.filter(Staff.role == "broker").all()
+    for broker in brokers:
+        broker_info = broker_pay_out(broker)
+        if broker_info["fee_unpaid"] > 0:
+            broker_dict[broker] = broker_pay_out(broker)
+        
+    return broker_dict
+    
+    

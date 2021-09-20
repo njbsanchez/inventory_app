@@ -42,7 +42,7 @@
 		{% block head %}{% endblock %}
 	</head>
 
-	<body class="text-dark">
+	<header class="text-dark">
 		<nav class="navbar navbar-light bg-light navbar-static-top">
 			<div class="container-fluid">
 				<a class="navbar-brand" href="/"
@@ -163,7 +163,8 @@
 				</div>
 			</div>
 		</nav>
-
+	</header>
+	<body>
 		{% block body %}{% endblock %} {% block after_body%} {% endblock %}
 	</body>
 </html>

@@ -55,7 +55,7 @@ class addintake(FlaskForm):
     notes = TextField('Notes')
     
     #Purchase Info
-    init_unitcount = IntegerField('Intake Amount', [validators.NumberRange(min=5, max=1000000), validators.DataRequired()])
+    init_unitcount = IntegerField('Intake Amount', [validators.NumberRange(min=1, max=1000000), validators.DataRequired()])
     cost_perunit = FloatField('$ Cost per Unit', [validators.DataRequired()])
     licensingfee = FloatField('Licensing Fee', [validators.DataRequired()])
     supplier = SelectField('Supplier', choices=[], coerce=int, option_widget=None, validate_choice=True) #https://stackoverflow.com/questions/12850605/how-do-i-generate-dynamic-fields-in-wtforms/18324514
@@ -66,21 +66,30 @@ class additem(FlaskForm):
     
     sku = SelectField('SKU Number', choices=[], coerce=int, validate_choice=True)
     product_id = SelectField('Product Category', choices=[], coerce=int, option_widget=None) #https://stackoverflow.com/questions/12850605/how-do-i-generate-dynamic-fields-in-wtforms/18324514
-    quantity = IntegerField('Quantity', [validators.NumberRange(min=5, max=1000000),validators.DataRequired()])
+    quantity = IntegerField('Quantity', [validators.NumberRange(min=1, max=1000000),validators.DataRequired()])
     itemsubmit = SubmitField('Add Item')
     
 class addsale(FlaskForm):
-    invoice_no = StringField('Sample Number', [validators.DataRequired()])
-    date = DateField('Intake Date', format='%Y-%m-%d')
-    prem_disc = FloatField('Premium/Discount Percentage')
-    wiring_fee = FloatField('Wiring Fee')
+    invoice_no = StringField('  Sample Number', [validators.DataRequired()])
+    date = DateField('  Intake Date', format='%Y-%m-%d')
+    prem_disc = SelectField(u'If applying a discount or premium to sale, please select percentage option', default=0, choices=[(25, '+25%'), 
+                                                                            (20, '+20%'),
+                                                                            (15, '+15%'),
+                                                                            (10, '+10%'),
+                                                                            (5, '+5%'),
+                                                                            (0, "No Discount or Premium"),
+                                                                            (-5, '-5%'),
+                                                                            (-10, '-10%'),
+                                                                            (-15, '-15%'),
+                                                                            (-25, '-25%')])
+    wiring_fee = FloatField('  Wiring Fee')
 
-    entity = SelectField('Customer', choices=[], coerce=int, option_widget=None, validate_choice=True)
+    entity = SelectField('  Customer', choices=[], coerce=int, option_widget=None, validate_choice=True)
     
-    staff_id = SelectField('Staff/Sales Associate', choices=[], coerce=int, option_widget=None, validate_choice=True)
-    broker_fee = FloatField('Broker Fee')
-    broker_fee_paid = BooleanField('Has Broker Fee been paid out?')
-    notes = TextField('Notes')
+    staff_id = SelectField('  Staff/Sales Associate', choices=[], coerce=int, option_widget=None, validate_choice=True)
+    broker_fee = FloatField('  Broker Fee')
+    broker_fee_paid = BooleanField('  Has Broker Fee been paid out?')
+    notes = TextField('  Notes')
     
     salesubmit = SubmitField('Proceed to Add Items')
 
@@ -103,7 +112,7 @@ class addsampleitem(FlaskForm):
     
     sku = SelectField('SKU Number', choices=[], coerce=int, validate_choice=True)
     product_id = SelectField('Product Category', choices=[], coerce=int, option_widget=None) #https://stackoverflow.com/questions/12850605/how-do-i-generate-dynamic-fields-in-wtforms/18324514
-    quantity = IntegerField('Quantity', [validators.NumberRange(min=5, max=1000000),validators.DataRequired()])
+    quantity = IntegerField('Quantity', [validators.NumberRange(min=1, max=1000000),validators.DataRequired()])
     
     notes = TextField('Notes')
     
