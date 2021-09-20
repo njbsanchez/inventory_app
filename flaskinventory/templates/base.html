@@ -1,6 +1,8 @@
 <!DOCTYPE html>
+{% import "bootstrap/wtf.html" as wtf %}
 <html lang="en">
 	<head>
+		<script src="/static/js/modals.js"></script>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width" />
 
@@ -94,9 +96,9 @@
 									class="dropdown-menu"
 									aria-labelledby="offcanvasNavbarDropdown"
 								>
-									<li><a class="dropdown-item" href="#">Intake</a></li>
-									<li><a class="dropdown-item" href="#">Sale</a></li>
-									<li><a class="dropdown-item" href="#">Sample</a></li>
+									<li><a class="dropdown-item" href="#" id="intakeModal">Intake</a></li>
+									<li><a class="dropdown-item" href="#" id="saleModal">Sale</a></li>
+									<li><a class="dropdown-item" href="#" id="sampleModal">Sample</a></li>
 									<li>
 										<hr class="dropdown-divider" />
 									</li>
@@ -107,10 +109,10 @@
 								<a class="nav-link" href="#">Inventory</a>
 							</li>
 							<li class="nav-item">
-								<a class="nav-link" href="#">Sales</a>
+								<a class="nav-link" href="/sales">Sales</a>
 							</li>
 							<li class="nav-item">
-								<a class="nav-link" href="#">Samples</a>
+								<a class="nav-link" href="/samples">Samples</a>
 							</li>
 							<li class="nav-item dropdown">
 								<a
@@ -165,6 +167,236 @@
 		</nav>
 	</header>
 	<body>
-		{% block body %}{% endblock %} {% block after_body%} {% endblock %}
+		{% block body %}
+			<!-- Sample here-->
+				<div
+					class="modal fade"
+					id="sampleModal"
+					tabindex="-1"
+					role="dialog"
+					aria-labelledby="sampleModalLabel"
+					aria-hidden="true"
+					style="margin-top: 150px"
+				>
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h3 class="modal-title" id="sampleModalLabel">Add Sample</h3>
+								<button
+									type="button"
+									class="close"
+									data-dismiss="modal"
+									aria-label="Close"
+								>
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<form
+								class="form-addSample form form-horizontal"
+								method="post"
+								role="form"
+							>
+								<div>
+									<h2 class="form-addEntity-heading">Add Sample</h2>
+									{{ form.hidden_tag() }} {{ wtf.form_errors(form, hiddens="only") }}
+									{{ wtf.form_field(form.record_no) }}
+									{{ wtf.form_field(form.date) }} 
+									<div class="form-group required">
+										<label class="control-label" for="entity">Customer Name</label>
+										<p></p>
+										{{ form.entity }}
+										<p></p>
+									</div>
+									<div class="form-group required">
+										<label class="control-label" for="entity">Sample Check Out or Sample Return?</label>
+										<p></p>
+										{{ form.movement }}
+										<p></p>
+									</div>
+									<div class="form-group required">
+										<label class="control-label" for="staff">Seller/Staff</label>
+										<p></p>
+										{{ form.staff_id }}
+										<p></p>
+									</div>
+									{{ wtf.form_field(form.notes) }} 
+								</div>
+								<div class="modal-footer">
+									<div>{{ form.samplesubmit(class='btn btn-primary') }}</div>
+									<button
+										type="button"
+										class="btn btn-secondary"
+										data-dismiss="modal"
+						
+									>
+										Close
+									</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			<!--end of modal-->
+			<!-- Intake code here-->
+				<div
+					class="modal fade"
+					id="intakeModal"
+					tabindex="-1"
+					role="dialog"
+					aria-labelledby="intakeModalLabel"
+					aria-hidden="true"
+					style="margin-top: 10px"
+				>
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h3 class="modal-title" id="intakeModalLabel">Add Intake</h3>
+								<button
+									type="button"
+									class="close"
+									data-dismiss="modal"
+									aria-label="Close"
+								>
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<form
+								class="form-addentity form form-horizontal"
+								method="post"
+								role="form"
+							>
+								<div class="container-fluid">
+									{{ form.hidden_tag() }} {{ wtf.form_errors(form, hiddens="only")
+									}} {{ wtf.form_field(form.date) }}
+									<div class="form-group required">
+										<label class="control-label" for="product_id"
+											>Product Name</label
+										>
+										<p></p>
+										{{ form.product_id }}
+										<p></p>
+									</div>
+									{{ form.hidden_tag() }} {{ wtf.form_field(form.sku) }} {{
+									wtf.form_field(form.selling_price) }} {{
+									wtf.form_field(form.notes)}} {{
+									wtf.form_field(form.init_unitcount) }} {{
+									wtf.form_field(form.cost_perunit) }} {{
+									wtf.form_field(form.licensingfee) }}
+									<div class="form-group required">
+										<label class="control-label" for="supplier"
+											>Supplier Contact Name</label
+										>
+										<p></p>
+										{{ form.supplier }}
+										<p></p>
+									</div>
+									<div clas <div class="form-group required">
+										<label class="control-label" for="staff_id"
+											>Staff/Broker Name</label
+										>
+										<p></p>
+										{{ form.staff_id }}
+										<p></p>
+									</div>
+								</div>
+								<div class="modal-footer">
+									<button
+										type="button"
+										class="btn btn-secondary"
+										data-dismiss="modal"
+									>
+										Close
+									</button>
+									<div>{{ form.intakesubmit(class="btn btn-primary") }}</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			<!--end of modal design-->
+			<!-- add Modal code here-->
+				<div
+					class="modal fade"
+					id="saleModal"
+					tabindex="-1"
+					role="dialog"
+					aria-labelledby="saleModalLabel"
+					aria-hidden="true"
+					style="margin-top: 10px"
+				>
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h3 class="modal-title" id="saleModalLabel">Add Sale</h3>
+								<p></p>
+								<button
+									type="button"
+									class="close"
+									data-dismiss="modal"
+									aria-label="Close"
+								>
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<form
+								class="form-addsale form form-horizontal"
+								method="post"
+								role="form"
+							>
+								<div class="container-fluid">
+									<h2 class="form-addEntity-heading">Add Sale</h2>
+									{{ form.hidden_tag() }} {{ wtf.form_errors(form, hiddens="only")
+									}} {{ wtf.form_field(form.invoice_no) }} {{
+									wtf.form_field(form.date)}}
+									<div class="form-group required p-2">
+										<label class="control-label" for="premdisc"
+											>Select Premium or Discount Rate
+										</label>
+										<p></p>
+										{{ form.prem_disc}}
+										<p></p>
+									</div>
+									{{wtf.form_field(form.wiring_fee) }}
+									<div class="form-group required p-2">
+										<label class="control-label" for="entity">Customer Name</label>
+										<p></p>
+										{{ form.entity }}
+										<p></p>
+									</div>
+									<div class="form-group required p-2">
+										<label class="control-label" for="staff">Seller/Staff</label>
+										<p></p>
+										{{ form.staff_id }}
+										<p></p>
+									</div>
+									{{ wtf.form_field(form.broker_fee) }}
+									<div class="form-group required">
+										<label class="control-label" for="staff"
+											>Has Broker Fee been paid out?</label
+										>
+										<p></p>
+										{{ form.broker_fee_paid }}
+										<p></p>
+									</div>
+									{{ wtf.form_field(form.notes) }}
+								</div>
+								<div class="modal-footer">
+									<div>{{ form.salesubmit(class='btn btn-primary') }}</div>
+									<button
+										type="button"
+										class="btn btn-secondary"
+										data-dismiss="modal"
+									>
+										Close
+									</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			<!--end of modal-->
+		
+		
+		{% endblock %} {% block after_body%} {% endblock %}
 	</body>
 </html>

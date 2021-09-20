@@ -1,4 +1,5 @@
 {% extends 'base.html' %} {% block title %}Home{% endblock %} 
+
 <body>
 {% block body%}
 
@@ -25,7 +26,16 @@
 					<p class="card-text">
 						Recieved new shipment of product? Create a new intake record.
 					</p>
-					<a href="/intake/" class="btn btn-primary">Create Intake Record</a>
+					<button
+						type="button"
+						class="btn btn-add"
+						data-toggle="modal"
+						data-target="#saleModal"
+					>
+						<span class="btn-icon-add"
+							><i class="glyphicon glyphicon-plus"></i></span
+						>Add Sale
+					</button>
 				</div>
 			</div>
 		</div>
