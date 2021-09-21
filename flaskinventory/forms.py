@@ -33,7 +33,11 @@ class editstaff(FlaskForm):
 class AddEntity(FlaskForm):
     contact_name = StringField('Entity Name', [validators.DataRequired()])
     company_name = StringField('Company Name', [validators.DataRequired()])
-    entity_type = StringField('Entity Type: (OTH, Wholesale, MJ)',[validators.DataRequired()])
+    entity_role = SelectField(u'Entity Role', [validators.DataRequired()], choices=[("vendor", 'Vendor'), 
+                                                                            ("customer", 'Customer')])
+    entity_type = SelectField(u'Entity Role', [validators.DataRequired()], choices=[("oth", 'OTH'), 
+                                                                            ("wholesale", 'Wholesale'),
+                                                                            ("mj", "MJ")])
     email = EmailField('Email')
     phone = TelField('Telephone Number')
     notes = TextField('Notes')
@@ -96,7 +100,7 @@ class addsale(FlaskForm):
 
 class addsample(FlaskForm):
     record_no = StringField('Record Number', [validators.DataRequired()])
-    date = DateField('Intake Date', format='%Y-%m-%d')
+    date = DateField('Sample Date', format='%Y-%m-%d')
     
     entity = SelectField('Customer', choices=[], coerce=int, validate_choice=True)
     

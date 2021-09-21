@@ -209,6 +209,7 @@ class Entity(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     contact_name = db.Column(db.String(150), unique=True, nullable=False)
     company_name = db.Column(db.String(150), nullable=False)
+    entity_role = db.Column(db.String(150), nullable=False)
     entity_type = db.Column(db.String(150), nullable=False)
     email = db.Column(db.String(255))
     phone = db.Column(db.String)
@@ -220,8 +221,8 @@ class Entity(db.Model):
     def __repr__(self):
         return f'< Contact = {self.contact_name} Company = {self.company_name} >'
 
-    def __init__(self, contact_name, company_name=None, entity_type="MJ", email=None, phone=None, notes="N/A",):
-        self.contact_name, self.company_name, self.entity_type, self.notes, self.email, self.phone = (contact_name, company_name, entity_type, notes, email, phone)
+    def __init__(self, contact_name, entity_role, company_name=None, entity_type="MJ", email=None, phone=None, notes="N/A",):
+        self.contact_name, self.company_name, self.entity_type, self.entity_role, self.notes, self.email, self.phone = (contact_name, company_name, entity_type, entity_role, notes, email, phone)
         if company_name == None:
             self.company_name = contact_name
 

@@ -3,24 +3,21 @@
 
 <head>
 	{% block title %} Sale {% endblock %}
+	
 </head>
 <header></header>
 <body>
 	{% block body %}
 
-	<style></style>
 	<script src="/static/js/modals.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-	<link
-		rel="stylesheet"
-		href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
-	/>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
 
 	<div class="container">
 		<h1>Sale</h1>
 		<div>
-			<h3 style="display: inline-block; margin: 10">Add Sale</h3>
+			<h3 style="display: inline-block; margin: 20">Add Sale</h3>
 			<button
 				type="button"
 				class="btn btn-add"
@@ -33,7 +30,7 @@
 			</button>
 		</div>
 
-		<!-- add Modal code here-->
+		<!-- Sale Modal code here-->
 		<div
 			class="modal fade"
 			id="saleModal1"
@@ -46,7 +43,7 @@
 			<div class="modal-dialog" role="document">
 				<div class="modal-content">
 					<div class="modal-header">
-						<h3 class="modal-title" id="exampleModalLabel">Add Sale</h3>
+						<h3 class="modal-title" id="saleModalLabel">Add Sale</h3>
 						<p></p>
 						<button
 							type="button"
@@ -148,5 +145,7 @@
 			</tbody>
 		</table>
 	</div>
+
 	{% endblock %}
+	
 </body>

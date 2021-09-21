@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+{% extends "base.html" %} 
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block head %}
+	<style>
+	</style>
+{% endblock %}
+
+{% block title %} Entity Management {% endblock %}
+
+{% block body %}
+
+<div class="container">
+
+	<h1>Entity</h1>
+	<div >
+		<h3 style="display: inline-block;margin:0;"> Add entities.</h3>
+		<button type="button" class="btn btn-add" data-toggle="modal" data-target="#exampleModal">
+		<span class="btn-icon-add"><i class="glyphicon glyphicon-plus"></i></span>Add Entity</button>
+	</div>
+
+	<!-- add Modal code here-->
+	<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="margin-top:150px;">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h3 class="modal-title" id="exampleModalLabel">Add Entity</h3>
+					<button
+						type="button"
+						class="close"
+						data-dismiss="modal"
+						aria-label="Close"
+					>
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<form class="form-addentity form form-horizontal" method="post" role="form">
+					<div>
+					<h2 class="form-addEntity-heading">Add Entity</h2>
+					{{ form.hidden_tag() }}
+					{{ wtf.form_errors(form, hiddens="only") }}
+					{{ wtf.form_field(form.contact_name) }}
+					{{ wtf.form_field(form.company_name) }}
+					{{ wtf.form_field(form.entity_type) }}
+					{{ wtf.form_field(form.email) }}
+					{{ wtf.form_field(form.phone) }}
+					{{ wtf.form_field(form.notes) }}
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						<div>{{ form.staffsubmit(class="btn btn-primary") }}</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!--end of modal design-->
+
+	<table class="table table-hover">
+		<thead>
+			<tr>
+				<th>ID</th>
+				<th>Contact Name</th>
+				<th>Company Name</th>
+				<th>Email</th>
+				<th>Phone Number</th>
+				<th>Notes</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for p in details %}
+			<tr>
+				<td>{{p.id}}</td>
+				<td>{{p.contact_name}}</td>
+				<td>{{p.contact_name}}</td>
+				<td>{{p.entity_type}}</td>
+				<td>{{p.email}}</td>
+				<td>{{p.phone}}</td>
+				<td>{{p.notes}}</td>
+				<td>
+					<button
+						type="button"
+						class="btn btn-edit"
+						data-toggle="modal"
+						data-target="#edit{{p.id}}"
+					>
+						<span class="btn-icon"
+							><i class="glyphicon glyphicon-pencil"></i></span
+						>Edit (Coming Soon)
+					</button>
+				</td>
+			</tr>
+			{%endfor%}
+		</tbody>
+	</table>
+</div>
+{% endblock %}
+

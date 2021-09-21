@@ -284,8 +284,43 @@ def show_staff():
     return render_template("staff.html", details=details, form=form)
 
 
-@app.route("/entity/", methods=['GET', 'POST'])
-def show_entity():
+@app.route("/customers/", methods=['GET', 'POST'])
+def show_customers():
+    """list staff/add staff."""
+    form = AddEntity()
+    details = Entity.query.filter(Entity.entity_role == "customer").all()
+    exists = bool(Entity.query.all())
+
+    if exists == False and request.method == 'GET':
+        flash(f'Add an entity to view', 'info')
+
+    if form.validate_on_submit():
+
+        new_entity = Entity(contact_name=form.contact_name.data,
+                            company_name=form.company_name.data,
+                            entity_type=form.entity_type.data,
+                            email=form.email.data,
+                            phone=form.phone.data,
+                            notes=form.notes.data)
+
+        print(new_entity)
+        db.session.add(new_entity)
+
+        try:
+            db.session.commit()
+            print('added!')
+            flash(f'Entity has been added!', 'success')
+            return redirect(url_for('show_entity'))
+        except sq.IntegrityError:
+            db.session.rollback()
+            flash(f'This staff member already exists.', 'danger')
+            return redirect('/entity')
+
+    return render_template("customer.html", details=details, form=form)
+
+
+@app.route("/vendors/", methods=['GET', 'POST'])
+def show_vendors():
     """list staff/add staff."""
     form = AddEntity()
     details = Entity.query.all()
