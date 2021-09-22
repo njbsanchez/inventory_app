@@ -15,6 +15,7 @@
 			width: 100%;
 			border: 100%%;
 			border-top: 1px solid rgba(0, 0, 0, 0.1);
+			padding-right: -30px;
 			}
 		td, th {
 			border: 1px solid #dddddd;
@@ -36,10 +37,14 @@
 	/>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
+	<div class="row-12" style="text-align:center">
+	<img src="https://i.postimg.cc/pdsKMRCB/heading-1.png" class:"center" width:"100%">
+	</div>
+
 	<div class="container">
 		<div class="container">
-		<h1 class="text-center"><b>Customer Record</b></h1>
-		<h5 class="text-center">Edit Customer • New Sale • Record Sample • Record Payment</b></h5>
+		<h1 class="text-center"><b>Customer Record</b><h1>
+		<h5 class="text-center">Edit Customer Details • New Sale • Record Sample • Record Payment</b></h5>
 
 
 		<hr/>
@@ -60,120 +65,104 @@
 		</div>
 		
 		<hr/>
+
 		<h2 class="text-center"> Record Summary </h2>
 
-		<div class="row row-cols-1 row-cols-md-2 g-4 border-dark"style="padding-top: 20px">
+		<div class="row row-cols-1 row-cols-md-2 g-4 border-dark"style="padding-top: 20px; padding-right: 20px">
 			<div class="col-lg-8 ">
 				<TABLE style="width:100%">
 					<TR>
-						<td style="font-size:35px"class="p-5">Total Sales</td>
+						<td style="font-size:35px"class="p-5"><b>Total Sales</b></td>
 						<td style="font-size:40px" class="text-center p-5">{{ customer.get_sum_of_sales() }}</td>
 					</TR>
 					<TR>
-						<td style="font-size:35px"class="p-5">Amount Received</td>
+						<td style="font-size:35px"class="p-5"><b>Amount Received</b></td>
 						<td style="font-size:40px" class="text-center p-5">{{ customer.get_sum_of_payments() }}</td>
 					</TR>
 					<TR>
-						<td style="font-size:35px"class="p-5">Outstanding Balanced Owed</td>
+						<td style="font-size:35px"class="p-5"><b>Outstanding Balanced Owed</b></td>
 						<td style="font-size:40px" class="text-center p-5">{{ customer.get_outstanding_total() }}</td>
 					</TR>
 				</TABLE>
 			</div>
-			<div class="sample col-lg-4">
-				<h3b class="card-title">sample out</h3>
+			<div class="sample col-lg-4" >
+				<h3 class="card-title text-center" style="padding-bottom: 20px">Sample Items</h3>
+				<TABLE style="width:100%; border: 0px solid #dddddd;
+			text-align: left;
+			padding: 8px;">
+					<TR>
+						<th style="border:0px; text-align: center;">Product/SKU</th>
+						<th style="border:0px; text-align: center;">Unit Count</th>
+					</TR>
+					{% for item in sample_dict.keys() %}
+					<TR>
+						<td style="border:0px; text-align: center;">{{ item.product.product_name }}: SKU {{ item.sku }}</td>
+						<td style="border:0px; text-align: center;">{{ sample_dict[item] }} </td>
+					</TR>
+					{%endfor%}
+				</TABLE>
 			</div>
 		</div>
-		</div>
+
 		
 		<hr/>
 
-		<div class="container">
-			<h3 class="card-title">Sale Transactions</h3>
-			<table class="table table-hover">
-				<thead>
-					<tr>
-						<th>Date</th>
-						<th>Invoice</th>
-						<th>Customer</th>
-						<th>Items Purchased</th>
-						<th>Sale Amount</th>
-						<th></th>
-					</tr>
-				</thead>
-				<tbody>
-					{% for sale in customer.sales %}
-					<tr>
-						<td>{{ sale.date }}</td>
-						<td>{{ sale.invoice_no }}</td>
-						<td>{{ sale.entity_id }}</td>
-						<td>{{ sale.items }}</td>
-						<td>{{ sale.get_subtotal_sum() }}</td>
-						<td>
-							<a href="/sale_record/{{ sale.id }}">See Details</a>
-						</td>
-					</tr>
-					{%endfor%}
-				</tbody>
-			</table>
-		</div>
-		<div class="container">
-			<h3 class="card-title">Payment Transactions</h3>
-			<table class="table table-hover">
-				<thead>
-					<tr>
-						<th>Date</th>
-						<th>Invoice</th>
-						<th>Customer</th>
-						<th>Items Purchased</th>
-						<th>Sale Amount</th>
-						<th></th>
-					</tr>
-				</thead>
-				<tbody>
-					{% for sale in customer.sales %}
-					<tr>
-						<td>{{ sale.date }}</td>
-						<td>{{ sale.invoice_no }}</td>
-						<td>{{ sale.entity_id }}</td>
-						<td>{{ sale.items }}</td>
-						<td>{{ sale.get_subtotal_sum() }}</td>
-						<td>
-							<a href="/sale_record/{{ sale.id }}">See Details</a>
-						</td>
-					</tr>
-					{%endfor%}
-				</tbody>
-			</table>
-		</div>
-		<div class="container">
-			<h3 class="card-title">Sample Items Checked Out</h3>
-			<table class="table table-hover">
-				<thead>
-					<tr>
-						<th>Date</th>
-						<th>Invoice</th>
-						<th>Customer</th>
-						<th>Items Purchased</th>
-						<th>Sale Amount</th>
-						<th></th>
-					</tr>
-				</thead>
-				<tbody>
-					{% for sale in customer.sales %}
-					<tr>
-						<td>{{ sale.date }}</td>
-						<td>{{ sale.invoice_no }}</td>
-						<td>{{ sale.entity_id }}</td>
-						<td>{{ sale.items }}</td>
-						<td>{{ sale.get_subtotal_sum() }}</td>
-						<td>
-							<a href="/sale_record/{{ sale.id }}">See Details</a>
-						</td>
-					</tr>
-					{%endfor%}
-				</tbody>
-			</table>
-		</div>
+		<h3 class="card-title">Sale Transactions</h3>
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th>Date</th>
+					<th>Invoice</th>
+					<th>Customer</th>
+					<th>Items Purchased</th>
+					<th>Sale Amount</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for sale in customer.sales %}
+				<tr>
+					<td>{{ sale.date }}</td>
+					<td>{{ sale.invoice_no }}</td>
+					<td>{{ sale.entity_id }}</td>
+					<td>{{ sale.items }}</td>
+					<td>{{ sale.get_subtotal_sum() }}</td>
+					<td>
+						<a href="/sale_record/{{ sale.id }}">See Details</a>
+					</td>
+				</tr>
+				{%endfor%}
+			</tbody>
+		</table>
+
+		<h3 class="card-title">Payment Transactions</h3>
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th>Date</th>
+					<th>Payment ID</th>
+					<th>Receiving Staff Member</th>
+					<th>Amount Received</th>
+					<th>Sale Amount</th>
+					<th>Notes</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for payment in payments %}
+				<tr>
+					<td>{{ payment.date }}</td>
+					<td>{{ payment.id }}</td>
+					<td>{{ payment.staff.staff_name }}</td>
+					<td>{{ payment.amount_received }}</td>
+					<td>{{ payment.notes }}</td>
+					<td>
+						link to payment
+					</td>
+				</tr>
+				{%endfor%}
+			</tbody>
+		</table>
 		
 	</div>
 	{% endblock %}

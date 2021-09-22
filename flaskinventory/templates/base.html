@@ -117,7 +117,7 @@
 										<a class="dropdown-item" href="/sale" id="saleModal">Sale</a>
 									</li>
 									<li>
-										<a class="dropdown-item" href="#" id="sampleModal"
+										<a class="dropdown-item" href="/payment" id="sampleModal"
 											>Payment</a
 										>
 									</li>
@@ -156,8 +156,8 @@
 									class="dropdown-menu"
 									aria-labelledby="offcanvasNavbarDropdown"
 								>
-									<li><a class="dropdown-item" href="/customers">Customers</a></li>
-									<li><a class="dropdown-item" href="/vendors">Vendors</a></li>
+									<li><a class="dropdown-item" href="/customer">Customers</a></li>
+									<li><a class="dropdown-item" href="/vendor">Vendors</a></li>
 								</ul>
 							</li>
 							<hr class="dropdown-divider" />
@@ -180,11 +180,12 @@
 									aria-labelledby="offcanvasNavbarDropdown"
 								>
 									<li>
-										<a class="dropdown-item" href="#">Staff and Brokers</a>
+										<a class="dropdown-item" href="/staff/">Staff and Brokers</a>
 									</li>
 									<li>
-										<a class="dropdown-item" href="#">Feature Requests</a>
+										<a href="mailto:njbsanchez@gmail.com?subject=Feature Request: MJ Inventory Tool"> Feature Requests</a>
 									</li>
+									
 								</ul>
 							</li>
 						</ul>
@@ -194,6 +195,9 @@
 		</nav>
 	</header>
 	<body>
-		{% block body %} {% endblock %} {% block after_body%} {% endblock %}
+		{% block body %} {% endblock %} {% block after_body%}
+		{% include 'footer.html' %}
+		{% endblock %}
+		
 	</body>
 </html>

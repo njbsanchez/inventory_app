@@ -14,10 +14,13 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
 
+	<div class="row-12" style="text-align:center">
+	<img src="https://i.postimg.cc/pdsKMRCB/heading-1.png" class:"center" width:"100%">
+	</div>
+
 	<div class="container">
-		<h1>Sale</h1>
-		<div>
-			<h3 style="display: inline-block; margin: 20">Add Sale</h3>
+		<h1 style="text-align:center"><b>All Sale Transactions</h1>
+		<div style="text-align:center">
 			<button
 				type="button"
 				class="btn btn-add"
@@ -119,26 +122,21 @@
 					<th>Invoice</th>
 					<th>Customer</th>
 					<th>Seller</th>
+					<th>Sale Receipt</th>
+					<th>Actions</th>
 				</tr>
 			</thead>
 			<tbody>
 				{% for p in details %}
 				<tr>
-					<td>{{p.date}}</td>
-					<td>{{p.invoice_no}}</td>
-					<td>{{p.entity_id}}</td>
-					<td>{{p.staff_id}}</td>
+					<td>{{ p.date}}</td>
+					<td>{{ p.invoice_no}}</td>
+					<td>{{ p.entity.contact_name}}</td>
+					<td>{{ p.staff.staff_name}}</td>
+					<td>${{ p.get_receipt_total() }}</td>
 					<td>
-						<button
-							type="button"
-							class="btn btn-edit"
-							data-toggle="modal"
-							data-target="#"
-						>
-							<span class="btn-icon"
-								><i class="glyphicon glyphicon-pencil"></i></span
-							>Edit (coming soon!)
-						</button>
+						<a href="sale/{{ p.id }}" class="btn btn-primary">Details</a>
+						<a href="#" style="background-color:red;" class="btn btn-primary">Delete</a>
 					</td>
 				</tr>
 				{%endfor%}

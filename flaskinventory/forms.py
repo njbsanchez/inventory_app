@@ -74,8 +74,8 @@ class additem(FlaskForm):
     itemsubmit = SubmitField('Add Item')
     
 class addsale(FlaskForm):
-    invoice_no = StringField('  Sample Number', [validators.DataRequired()])
-    date = DateField('  Intake Date', format='%Y-%m-%d')
+    invoice_no = StringField('Invoice Number', [validators.DataRequired()])
+    date = DateField('Sale Date', format='%Y-%m-%d')
     prem_disc = SelectField(u'If applying a discount or premium to sale, please select percentage option', default=0, choices=[(25, '+25%'), 
                                                                             (20, '+20%'),
                                                                             (15, '+15%'),
@@ -98,11 +98,11 @@ class addsale(FlaskForm):
     salesubmit = SubmitField('Proceed to Add Items')
 
 class addpayment(FlaskForm):
-    date = DateField('  Intake Date', format='%Y-%m-%d')
-    entity = SelectField('  Customer', choices=[], coerce=int, option_widget=None, validate_choice=True)
-    staff_id = SelectField('  Staff/Sales Associate', choices=[], coerce=int, option_widget=None, validate_choice=True)
-    amount_recieved = FloatField('  Broker Fee')
-    notes = TextField('  Notes')
+    date = DateField('Payment Date', format='%Y-%m-%d')
+    entity = SelectField('Customer', choices=[], coerce=int, option_widget=None, validate_choice=True)
+    staff_id = SelectField('Staff/Sales Associate', choices=[], coerce=int, option_widget=None, validate_choice=True)
+    amount_received = FloatField('Broker Fee')
+    notes = TextField('Notes')
     payment_submit = SubmitField('Proceed to Add Items')
 
 

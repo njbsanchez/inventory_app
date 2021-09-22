@@ -1,8 +1,8 @@
 from flaskinventory.crud import calculate_quantity_instock
 from flask import render_template, url_for, redirect, flash, request, jsonify
 # additem, addsale, recordsample,
-from flaskinventory.forms import AddStaff, AddEntity, addproduct, addintake, LoginForm, RegisterForm, additem, addsample, addsampleitem, addsale
-from flaskinventory.model import db, User, Staff, Entity, Product, Intake, Sale, Item, Sample, SampleItem
+from flaskinventory.forms import AddStaff, addpayment, AddEntity, addproduct, addintake, LoginForm, RegisterForm, additem, addsample, addsampleitem, addsale
+from flaskinventory.model import db, Payment, User, Staff, Entity, Product, Intake, Sale, Item, Sample, SampleItem
 from flask_bootstrap import Bootstrap
 from flaskinventory.app import app
 from flask_bootstrap import Bootstrap
@@ -313,7 +313,7 @@ def show_staff():
     return render_template("staff.html", details=details, form=form)
 
 
-@app.route("/customers/", methods=['GET', 'POST'])
+@app.route("/customer/", methods=['GET', 'POST'])
 def show_customers():
     """list staff/add staff."""
     form = AddEntity()
@@ -349,23 +349,23 @@ def show_customers():
     print (form.errors)
     return render_template("customer.html", details=details, form=form)
 
-@app.route("/customer_record/<entity_id>", methods=['GET'])
+@app.route("/customer/<entity_id>", methods=['GET'])
 def show_customer_record(entity_id):
     """list staff/add staff."""
     
-    latest_sales = Sale.query.order_by(Sale.id.desc()).limit(5)
-    
     customer = Entity.query.filter(Entity.id == entity_id).first()
+    
+    payments = Payment.query.order_by(Payment.entity == customer).all()
     
     sample_dict = customer.get_samples_out()
     
-    return render_template("customer_record.html", latest_sales=latest_sales, customer=customer, sample_dict=sample_dict)
+    return render_template("customer_record.html", payments=payments, customer=customer, sample_dict=sample_dict)
 
-@app.route("/vendors/", methods=['GET', 'POST'])
+@app.route("/vendor/", methods=['GET', 'POST'])
 def show_vendors():
     """list staff/add staff."""
     form = AddEntity()
-    details = Entity.query.filter(Entity.entity_role == "customer").all()
+    details = Entity.query.filter(Entity.entity_role == "vendor").all()
     exists = bool(Entity.query.all())
 
     if exists == False and request.method == 'GET':
@@ -397,12 +397,63 @@ def show_vendors():
     print (form.errors)
     return render_template("vendor.html", details=details, form=form)
 
+@app.route("/vendor/<entity_id>", methods=['GET'])
+def show_vendor_record(entity_id):
+    """list staff/add staff."""
+    
+    vendor = Entity.query.filter(Entity.id == entity_id).first()
+    
+    intakes = Intake.query.order_by(Intake.entity == vendor).all()
+    
+    
+    return render_template("vendor_record.html", intakes=intakes, vendor=vendor)
+
+
+@app.route("/payment/", methods=['GET', 'POST'])
+def show_payment():
+    """list sales."""
+    
+    details = Payment.query.order_by(Payment.date).all()
+    exists = bool(Payment.query.all())
+    
+    form = addpayment()
+
+    form.entity.choices = [(entity.id, entity.contact_name)
+                               for entity in Entity.query.all()]
+    form.staff_id.choices = [(staff.id, staff.staff_name)
+                               for staff in Staff.query.all()]
+
+    if exists == False and request.method == 'GET':
+        flash(f'Add sale to view', 'info')
+
+    if form.validate_on_submit():
+
+        # return '<h1>' + form.product_id.data + form.sku.data + ' ' + form.init_unitcount.data + ' ' +  form.supplier.data + ' ' +  '</h1>'
+        
+        new_payment = Payment(date=form.date.data,
+                          entity_id=form.entity.data,
+                          staff_id=form.staff_id.data,
+                          amount_received=form.amount_received.data,
+                          notes=form.notes.data
+                          )
+                          
+        print(new_payment)
+        db.session.add(new_payment)
+        db.session.commit()
+        
+        print('added!')
+        flash(f'Payment has been recorded!', 'success')
+        
+        return redirect(url_for('show_payment'))
+
+    return render_template("payment.html", details=details, form=form)
+
 
 @app.route("/sale/", methods=['GET', 'POST'])
 def show_sales():
     """list sales."""
     
-    details = Sale.query.all()
+    details = Sale.query.order_by(Sale.date).all()
     exists = bool(Sale.query.all())
     
     form = addsale()
@@ -426,7 +477,8 @@ def show_sales():
                           entity_id=form.entity.data,
                           staff_id=form.staff_id.data,
                           broker_fee=form.broker_fee.data,
-                          broker_fee_paid=form.broker_fee_paid.data
+                          broker_fee_paid=form.broker_fee_paid.data,
+                          notes=form.notes.data
                           )
                           
         print(new_sale)
@@ -442,7 +494,7 @@ def show_sales():
     return render_template("sale.html", details=details, form=form)
 
 
-@app.route("/sale_record/<sale_id>", methods=['GET', 'POST'])
+@app.route("/sale/<sale_id>", methods=['GET', 'POST'])
 def show_sale_record(sale_id):
     """list sales."""
     

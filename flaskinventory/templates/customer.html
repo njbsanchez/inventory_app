@@ -14,7 +14,12 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
 
+	<div class="row-12" style="text-align:center">
+	<img src="https://i.postimg.cc/pdsKMRCB/heading-4.png" class:"center" width:"100%">
+	</div>
+
 	<div class="container">
+
 
 	<h1>Customers</h1>
 	<div >
@@ -81,10 +86,9 @@
 				<th>ID</th>
 				<th>Contact Name</th>
 				<th>Company Name</th>
-				<th>Email</th>
-				<th>Phone Number</th>
-				<th>Notes</th>
-				<th></th>
+				<th>Customer Type</th>
+				<th>Contact Info</th>
+				<th>Actions</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -94,20 +98,10 @@
 				<td>{{p.contact_name}}</td>
 				<td>{{p.contact_name}}</td>
 				<td>{{p.entity_type}}</td>
-				<td>{{p.email}}</td>
-				<td>{{p.phone}}</td>
-				<td>{{p.notes}}</td>
+				<td>{{p.email}} • {{p.phone}}</td>
 				<td>
-					<button
-						type="button"
-						class="btn btn-edit"
-						data-toggle="modal"
-						data-target="#edit{{p.id}}"
-					>
-						<span class="btn-icon"
-							><i class="glyphicon glyphicon-pencil"></i></span
-						>Edit (Coming Soon)
-					</button>
+					<a href="/customer/{{ p.id }}" class="btn btn-primary">Profile Details</a>
+					<a href="#" style="background-color:red;" class="btn btn-primary">Delete</a>
 				</td>
 			</tr>
 			{%endfor%}

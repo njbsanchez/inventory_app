@@ -195,8 +195,9 @@ class Staff(db.Model):
     notes = db.Column(db.Text)
     
     intakes = db.relationship("Intake", backref='staff')
-    sales = db.relationship("Sale", backref='staffer')
-    
+    sales = db.relationship("Sale", backref='staff')
+    payments = db.relationship("Payment", backref='staff')
+   
     def __repr__(self):
         return f'< Staff = {self.staff_name} Role = {self.role} >'
 
@@ -215,9 +216,11 @@ class Entity(db.Model):
     phone = db.Column(db.String)
     notes = db.Column(db.Text)
     
-    suppliers = db.relationship("Intake", backref='entity')
+    intakes = db.relationship("Intake", backref='entity')
     sales = db.relationship("Sale", backref='entity')
     payments = db.relationship("Payment", backref='entity')
+    samples = db.relationship("Sample", backref='entity')
+
         
     def __repr__(self):
         return f'< Contact = {self.contact_name} Company = {self.company_name} >'
@@ -252,9 +255,9 @@ class Entity(db.Model):
         
         return sale_sum - payment_sum     
     
-    def get_samples_out(self):
+    def get_total_samples_out(self):
         
-        sample_items = SampleItem.query.filter(SampleItem.sample.entity_id == self.id).all()
+        sample_items = SampleItem.query.filter(SampleItem.sample.entity == self).all()
         
         sample_dict = {"checkedout": {"count": 0, "items": []}, "returned": {"count": 0, "item": []}}
         
@@ -265,6 +268,25 @@ class Entity(db.Model):
             elif item.sample.movement == "samplereturn":
                 sample_dict["returned"]["count"] += item.quantity
                 sample_dict["returned"]["items"].append(item)
+        
+        return sample_dict
+    
+    def get_samples_out(self):
+        
+        sample_items = SampleItem.query.filter(SampleItem.sample.entity == self).all()
+        
+        sample_dict = {}
+        
+        for item in sample_items:
+            
+            if item.intake_instance not in sample_dict:
+                sample_dict[item.intake_instance] = 0
+            
+            if item.sample.movement == "sampleout":
+                sample_dict[item.intake_instance] += item.quantity
+            
+            elif item.sample.movement == "samplereturn":
+                sample_dict[item.intake_instance] -= item.quantity
         
         return sample_dict
         
@@ -328,6 +350,13 @@ class Intake(db.Model):
 
     def __init__(self, date, sku, product_id, selling_price, initial_unit_count, cost_per_unit, licensing_fee, entity_id, staff_id, notes="N/A"):
         self.date, self.sku, self.product_id, self.selling_price, self.initial_unit_count, self.cost_per_unit, self.licensing_fee, self.entity_id, self.staff_id, self.notes = (date, sku, product_id, selling_price, initial_unit_count, cost_per_unit, licensing_fee, entity_id, staff_id, notes)
+
+    def get_intake_cog(self):
+        """Returns intake cog related to SKU"""
+        
+        total_cog = (self.cost_per_unit + self.licensing_fee) * self.initial_unit_count
+        
+        return total_cog
 
 def get_all_products():
     """Returns intake related to SKU"""

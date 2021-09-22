@@ -119,18 +119,6 @@ head%}
 				<td>{{ p.intake_instance.selling_price * ((100 + sale_instance.prem_disc_percentage) / 100) }}</td>
 				<td>{{ p.quantity }}</td>
 				<td>{{ p.subtotal }}</td>
-				<td>
-					<button
-						type="button"
-						class="btn btn-edit"
-						data-toggle="modal"
-						data-target="#"
-					>
-						<span class="btn-icon"
-							><i class="glyphicon glyphicon-pencil"></i></span
-						>Edit (coming soon!)
-					</button>
-				</td>
 			</tr>
 			{%endfor%}
 		</tbody>

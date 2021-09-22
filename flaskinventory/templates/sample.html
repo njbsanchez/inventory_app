@@ -14,17 +14,20 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
 
+	<div class="row-12" style="text-align:center">
+	<img src="https://i.postimg.cc/pdsKMRCB/heading-1.png" class:"center" width:"100%">
+	</div>
+
 	<div class="container">
-	<h1>Sample</h1>
-	<div>
-		<h3 style="display: inline-block; margin: 0">Add Sample</h3>
+	<h1 style="text-align:center"><b>All Sample Transactions</b></h1>
+	<div style="text-align:center">
 		<button
 			type="button"
 			class="btn btn-add"
 			data-toggle="modal"
 			data-target="#SampleModal1"
 		>
-			<span class="btn-icon-add"><i class="glyphicon glyphicon-plus"></i></span
+			<a class="btn-icon-add"><i class="glyphicon glyphicon-plus"></i></a
 			>Add Sample
 		</button>
 	</div>
@@ -58,7 +61,6 @@
 					role="form"
 				>
 					<div class="container-fluid">
-						<h2 class="form-addEntity-heading">Add Sample</h2>
 						{{ form.hidden_tag() }} {{ wtf.form_errors(form, hiddens="only") }}
 						{{ wtf.form_field(form.record_no) }}
 						{{ wtf.form_field(form.date) }} 
