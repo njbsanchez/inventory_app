@@ -57,7 +57,7 @@ def sku_get_sample_quantity(sku):
     
     for sampleitem in sampleitems_with_sku:
         
-        sample_record = Sample.query.filter(Sale.id == sampleitem.sale_id).first()
+        sample_record = Sample.query.filter(Sample.id == sampleitem.sale_id).first()
         if sample_record.movement == "sampleout":
             return_data["sampleout"]["quantity_total"] += sampleitem.quantity
             return_data["sampleout"]["sample_records"].append(sampleitem.id)
@@ -217,15 +217,57 @@ class Entity(db.Model):
     
     suppliers = db.relationship("Intake", backref='entity')
     sales = db.relationship("Sale", backref='entity')
-    
+    payments = db.relationship("Payment", backref='entity')
+        
     def __repr__(self):
         return f'< Contact = {self.contact_name} Company = {self.company_name} >'
 
-    def __init__(self, contact_name, entity_role, company_name=None, entity_type="MJ", email=None, phone=None, notes="N/A",):
-        self.contact_name, self.company_name, self.entity_type, self.entity_role, self.notes, self.email, self.phone = (contact_name, company_name, entity_type, entity_role, notes, email, phone)
+    def __init__(self, contact_name, entity_role, company_name=None, entity_type="MJ", email=None, phone=None, notes="N/A"):
         if company_name == None:
-            self.company_name = contact_name
+            company_name = contact_name
+        self.contact_name, self.company_name, self.entity_type, self.entity_role, self.notes, self.email, self.phone = (contact_name, company_name, entity_type, entity_role, notes, email, phone)       
 
+    def get_sum_of_sales(self):
+        
+        sale_sum = 0
+        
+        for sale in self.sales:
+            sale_sum += sale.get_receipt_total()
+            
+        return sale_sum
+    
+    def get_sum_of_payments(self):
+        
+        payment_sum = 0
+        
+        for payment in self.payments:
+            payment_sum += payment.amount_received
+            
+        return payment_sum
+    
+    def get_outstanding_total(self):
+        
+        sale_sum = self.get_sum_of_sales()
+        payment_sum = self.get_sum_of_payments()
+        
+        return sale_sum - payment_sum     
+    
+    def get_samples_out(self):
+        
+        sample_items = SampleItem.query.filter(SampleItem.sample.entity_id == self.id).all()
+        
+        sample_dict = {"checkedout": {"count": 0, "items": []}, "returned": {"count": 0, "item": []}}
+        
+        for item in sample_items:
+            if item.sample.movement == "sampleout":
+                sample_dict["checkedout"]["count"] += item.quantity
+                sample_dict["checkedout"]["items"].append(item)
+            elif item.sample.movement == "samplereturn":
+                sample_dict["returned"]["count"] += item.quantity
+                sample_dict["returned"]["items"].append(item)
+        
+        return sample_dict
+        
 def get_all_staff():
     """Returns intake related to SKU"""
     return Staff.query.all()
@@ -359,10 +401,7 @@ class Sale(db.Model):
     def get_receipt_total(self):
         """internal - return total receipt amount to be charged to client"""
         
-        sub = self.get_subtotal_sum()
-        
-        return sub + self.wiring_fee
-        
+        return self.get_subtotal_sum() + self.wiring_fee      
     
 class Item(db.Model):
     
@@ -454,11 +493,31 @@ class SampleItem(db.Model):
     def __init__(self, product_id, intake_id, quantity, sample_record_id, notes="N/A"):
         self.product_id, self.intake_id, self.quantity, self.sample_record_id, self.notes = (product_id, intake_id, quantity, sample_record_id, notes)
 
+class Payment(db.Model):
+    
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    date = db.Column(db.Date, nullable=False)
+    
+    #REF: Customer Info
+    entity_id = db.Column(db.Integer(), db.ForeignKey(Entity.id))
+    
+    #REF: Staff Info
+    staff_id = db.Column(db.Integer(), db.ForeignKey(Staff.id))
+    amount_received = db.Column(db.Float(10), nullable=False)
+    
+    notes = db.Column(db.Text)
+    
+    
+    # def __repr__(self):
+    #     return f'<Customer = {self.name} Invoice = {self.invoice_no} Date = {self.date} >'
+    
+    def __init__(self, date, entity_id, staff_id, amount_received, notes="N/A"):
+        self.date, self.entity_id, self.staff_id, self.amount_received, self.notes = (date, entity_id, staff_id, amount_received, notes)
+
 def get_sale_by_id(id):
     """Return sale with given ID."""
     
     return Sale.query.filter(Sale.id==id).first()
-
 def get_sale_by_invoice(invoice_no):
     """Return sale with given invoice number."""
     

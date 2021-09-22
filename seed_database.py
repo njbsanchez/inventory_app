@@ -18,9 +18,10 @@ def get_entities():
     # Create dummy users, store them in list so we can use them
     dummies_in_db = []
     for entity, details in dummy_entities[0].items():
-        contact_name, company_name, entity_type, email, phone, notes = (
+        contact_name, company_name, entity_role, entity_type, email, phone, notes = (
             details["contact_name"],
             details["company_name"],
+            details["entity_role"],
             details["entity_type"],
             details["email"],
             details["phone"],
@@ -28,7 +29,7 @@ def get_entities():
         )
         # print(contact_name, company_name, entity_type, email, phone, notes)
         db_entity = m.Entity(
-            contact_name, company_name, entity_type, email, phone, notes
+            contact_name, entity_role, company_name, entity_type, email, phone, notes
         )
         m.db.session.add(db_entity)
 

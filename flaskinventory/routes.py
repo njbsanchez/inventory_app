@@ -1,3 +1,4 @@
+from flaskinventory.crud import calculate_quantity_instock
 from flask import render_template, url_for, redirect, flash, request, jsonify
 # additem, addsale, recordsample,
 from flaskinventory.forms import AddStaff, AddEntity, addproduct, addintake, LoginForm, RegisterForm, additem, addsample, addsampleitem, addsale
@@ -40,6 +41,7 @@ def go_home():
     broker_info = crud.outstanding_broker_fees()
     
     return render_template("home.html", latest_sales=latest_sales, latest_intakes=latest_intakes, broker_info=broker_info)
+
 
 @app.route("/", methods=['POST'])
 def home_action():
@@ -139,8 +141,7 @@ def home_action():
         flash(f'Sample has been recorded!', 'success')
         
         return redirect(url_for('show_sample_record',sample_record_id=new_sample_record.id))
-
-    
+  
 
 @app.route("/admin_new_user", methods=['GET', 'POST'])
 def signup():
@@ -247,6 +248,34 @@ def show_intake():
     return render_template("intake.html", details=details, form=form)
 
 
+@app.route("/inventory/", methods=['GET'])
+def show_inventory():
+    """list staff/add staff."""
+    
+    all_products = Product.query.order_by(Product.product_name).all()
+    
+    product_dict = {}
+    
+    for product in all_products:
+        
+        product_dict[product] = {"variants":{},
+                                         "intake_count": crud.prod_get_intake_quantity(product.id),
+                                         "sale_count": crud.prod_get_sale_quantity(product.id),
+                                         "sample_count": crud.prod_get_sample_quantity(product.id)
+                                         }
+
+        variant_dict = product_dict[product]["variants"]
+        
+        for variant in product.intake_variants:
+            variant_dict[variant] = {"original_count": crud.sku_get_intake_quantity(variant.id),
+                              "sale_count": crud.sku_get_sale_quantity(variant.id),
+                              "sample_count": crud.sku_get_sample_quantity(variant.id),
+                              "current_count": calculate_quantity_instock(variant.id)
+                              }
+    
+    return render_template("inventory.html", product_dict=product_dict)
+
+
 @app.route("/staff/", methods=['GET', 'POST'])
 def show_staff():
     """list staff/add staff."""
@@ -296,7 +325,9 @@ def show_customers():
 
     if form.validate_on_submit():
 
+
         new_entity = Entity(contact_name=form.contact_name.data,
+                            entity_role=form.entity_role.data,
                             company_name=form.company_name.data,
                             entity_type=form.entity_type.data,
                             email=form.email.data,
@@ -310,20 +341,31 @@ def show_customers():
             db.session.commit()
             print('added!')
             flash(f'Entity has been added!', 'success')
-            return redirect(url_for('show_entity'))
+            return redirect(url_for('show_customers'))
         except sq.IntegrityError:
             db.session.rollback()
             flash(f'This staff member already exists.', 'danger')
             return redirect('/entity')
-
+    print (form.errors)
     return render_template("customer.html", details=details, form=form)
 
+@app.route("/customer_record/<entity_id>", methods=['GET'])
+def show_customer_record(entity_id):
+    """list staff/add staff."""
+    
+    latest_sales = Sale.query.order_by(Sale.id.desc()).limit(5)
+    
+    customer = Entity.query.filter(Entity.id == entity_id).first()
+    
+    sample_dict = customer.get_samples_out()
+    
+    return render_template("customer_record.html", latest_sales=latest_sales, customer=customer, sample_dict=sample_dict)
 
 @app.route("/vendors/", methods=['GET', 'POST'])
 def show_vendors():
     """list staff/add staff."""
     form = AddEntity()
-    details = Entity.query.all()
+    details = Entity.query.filter(Entity.entity_role == "customer").all()
     exists = bool(Entity.query.all())
 
     if exists == False and request.method == 'GET':
@@ -331,7 +373,9 @@ def show_vendors():
 
     if form.validate_on_submit():
 
+
         new_entity = Entity(contact_name=form.contact_name.data,
+                            entity_role=form.entity_role.data,
                             company_name=form.company_name.data,
                             entity_type=form.entity_type.data,
                             email=form.email.data,
@@ -345,13 +389,13 @@ def show_vendors():
             db.session.commit()
             print('added!')
             flash(f'Entity has been added!', 'success')
-            return redirect(url_for('show_entity'))
+            return redirect(url_for('show_vendors'))
         except sq.IntegrityError:
             db.session.rollback()
             flash(f'This staff member already exists.', 'danger')
-            return redirect('/entity')
-
-    return render_template("entity.html", details=details, form=form)
+            return redirect('/show_vendors')
+    print (form.errors)
+    return render_template("vendor.html", details=details, form=form)
 
 
 @app.route("/sale/", methods=['GET', 'POST'])
@@ -443,6 +487,17 @@ def show_sale_record(sale_id):
 
     print (form.errors)
     return render_template("sale_record.html",details=details, staff_info=staff_info, entity_info=entity_info, sale_instance=sale_instance, form=form, sale_id=sale_id)
+
+
+@app.route("/sale_all/", methods=['GET'])
+def show_sale_all():
+    """list staff/add staff."""
+    
+    latest_sales = Sale.query.order_by(Sale.id.desc()).limit(5)
+    
+    all_customers = Entity.query.filter(Entity.entity_role == "customer").order_by(Entity.contact_name).all()
+    
+    return render_template("sale_all.html", latest_sales=latest_sales, all_customers=all_customers)
 
 
 @app.route("/sample/", methods=['GET', 'POST'])

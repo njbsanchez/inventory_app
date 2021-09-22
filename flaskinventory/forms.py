@@ -35,13 +35,13 @@ class AddEntity(FlaskForm):
     company_name = StringField('Company Name', [validators.DataRequired()])
     entity_role = SelectField(u'Entity Role', [validators.DataRequired()], choices=[("vendor", 'Vendor'), 
                                                                             ("customer", 'Customer')])
-    entity_type = SelectField(u'Entity Role', [validators.DataRequired()], choices=[("oth", 'OTH'), 
+    entity_type = SelectField(u'Entity Type', [validators.DataRequired()], choices=[("oth", 'OTH'), 
                                                                             ("wholesale", 'Wholesale'),
                                                                             ("mj", "MJ")])
     email = EmailField('Email')
     phone = TelField('Telephone Number')
     notes = TextField('Notes')
-    staffsubmit = SubmitField('Save Changes')
+    entitysubmit = SubmitField('Save Changes')
 
 class addproduct(FlaskForm):
     prodname = StringField('Product Name', [validators.DataRequired()])
@@ -96,6 +96,14 @@ class addsale(FlaskForm):
     notes = TextField('  Notes')
     
     salesubmit = SubmitField('Proceed to Add Items')
+
+class addpayment(FlaskForm):
+    date = DateField('  Intake Date', format='%Y-%m-%d')
+    entity = SelectField('  Customer', choices=[], coerce=int, option_widget=None, validate_choice=True)
+    staff_id = SelectField('  Staff/Sales Associate', choices=[], coerce=int, option_widget=None, validate_choice=True)
+    amount_recieved = FloatField('  Broker Fee')
+    notes = TextField('  Notes')
+    payment_submit = SubmitField('Proceed to Add Items')
 
 
 class addsample(FlaskForm):

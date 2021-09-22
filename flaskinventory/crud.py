@@ -9,15 +9,15 @@ import sqlalchemy.exc as sq
 
 # By SKU ~~~~~~~~~~~
 
-def sku_get_intake_quantity(sku):
+def sku_get_intake_quantity(id):
     """quantity from intake"""
 
-    return Intake.query.filter(Intake.sku == sku).first()
+    return Intake.query.filter(Intake.id == id).first().initial_unit_count
 
-def sku_get_sale_quantity(sku):
+def sku_get_sale_quantity(id):
     """add quantity of all sales"""
     
-    items_with_sku = Item.query.filter(Item.sku == sku).all()
+    items_with_sku = Item.query.filter(Item.id == id).all()
     return_data = {"quantity_total": 0, "sale_records":[]}
     
     for item in items_with_sku:
@@ -26,15 +26,15 @@ def sku_get_sale_quantity(sku):
         
     return return_data     
 
-def sku_get_sample_quantity(sku):   
+def sku_get_sample_quantity(id):   
     """add quantity of all samples out"""
     
-    sampleitems_with_sku = SampleItem.query.filter(SampleItem.sku == sku).all()
+    sampleitems_with_sku = SampleItem.query.filter(SampleItem.id == id).all()
     return_data = {"sampleout":{"quantity_total": 0, "sample_records":[]}, "returned": {"quantity_total": 0, "sample_records":[]}}
     
     for sampleitem in sampleitems_with_sku:
         
-        sample_record = Sample.query.filter(Sale.id == sampleitem.sale_id).first()
+        sample_record = Sample.query.filter(Sample.id == sampleitem.sale_id).first()
         if sample_record.movement == "sampleout":
             return_data["sampleout"]["quantity_total"] += sampleitem.quantity
             return_data["sampleout"]["sample_records"].append(sampleitem.id)
@@ -44,12 +44,12 @@ def sku_get_sample_quantity(sku):
 
     return return_data  
 
-def calculate_quantity_instock(sku):
+def calculate_quantity_instock(id):
     """quantity left = intake minus sales, minus samples out, add sample returned"""
 
-    quant_intake = sku_get_intake_quantity(sku)
-    quant_sold = sku_get_sale_quantity(sku)
-    quant_dict = sku_get_sample_quantity(sku)
+    quant_intake = sku_get_intake_quantity(id)
+    quant_sold = sku_get_sale_quantity(id)
+    quant_dict = sku_get_sample_quantity(id)
     quant_sample_out = quant_dict["sampleout"]
     quant_sample_returned = quant_dict["returned"]
     
@@ -66,7 +66,7 @@ def prod_get_intake_quantity(product_id):
     intake_with_id = Intake.query.filter(Intake.product_id == product_id).all()
     
     for intake in intake_with_id:
-            intake_quant += intake.quantity
+            intake_quant += intake.initial_unit_count
     
     return intake_quant
    
@@ -89,7 +89,7 @@ def prod_get_sample_quantity(product_id):
     
     for sampleitem in sampleitems_with_id:
         
-        sample_record = Sample.query.filter(Sale.id == sampleitem.sale_id).first()
+        sample_record = Sample.query.filter(Sample.id == sampleitem.sale_id).first()
         if sample_record.movement == "sampleout":
             return_data["sampleout"]["quantity_total"] += sampleitem.quantity
             return_data["sampleout"]["sample_records"].append(sampleitem.sample_record_id)

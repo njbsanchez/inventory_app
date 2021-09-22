@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+{% extends "base.html" %} {% import "bootstrap/wtf.html" as wtf %}
+
+<head>
+	{% block title %} Intake {% endblock %}
+</head>
+<header></header>
+<body>
+	{% block body%}
+
+	<style></style>
+	<script src="/static/js/modals.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+	<link
+		rel="stylesheet"
+		href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+	/>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+	<div class="container">
+		<h1>Inventory (By Product)</h1>
+		
+		{% for product in product_dict.keys() %}
+		<div>
+			<h3 style="display: inline-block">{{ product.product_name  }}</h3>
+			<h5> Description: {{product.description}} </h5>
+		</div>
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th>SKU</th>
+					<th>Cost per Unit</th>
+					<th>Selling Price</th>
+					<th>Initial Unit Count</th>
+					<th>Units Sold</th>
+					<th>Units Sampled-Out</th>
+					<th>Currently In Stock</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for variant in product_dict[product]["variants"].keys() %}
+				<tr>
+					<td>{{  variant.sku  }}</td>
+					<td>{{  variant.cost_per_unit  }}</td>
+					<td>{{  variant.selling_price  }}</td>
+					<td>{{  variant.initial_unit_count  }}</td>
+					<td>{{  product_dict[product]["variants"][variant]["sale_count"]["quantity_total"]  }}</td>
+					<td>{{  product_dict[product]["variants"][variant]["sample_count"]["sampleout"]["quantity_total"]  }}</td>
+					<td>{{  product_dict[product]["variants"][variant]["current_count"]  }}</td>
+				</tr>
+				{%endfor%}
+			</tbody>
+		</table>
+	{%endfor%}
+	</div>
+	{% endblock %}
+</body>
