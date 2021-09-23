@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+{% extends "base.html" %} {% import "bootstrap/wtf.html" as wtf %}
+
+<head>
+	{% block title %} {{ vendor.contact_name }} {% endblock %}
+</head>
+<header></header>
+<body>
+	{% block body%}
+
+	<style>
+		hr {
+			margin-top: 1rem;
+			margin-bottom: 1rem;
+			width: 100%;
+			border: 100%%;
+			border-top: 1px solid rgba(0, 0, 0, 0.1);
+			padding-right: -30px;
+			}
+		td, th {
+			border: 1px solid #dddddd;
+			text-align: left;
+			padding: 8px;
+			}
+		div.sample {
+			border: 1px solid #dddddd;
+			text-align: left;
+			padding: 8px;
+		}
+
+	</style>
+	<script src="/static/js/modals.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+	<link
+		rel="stylesheet"
+		href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+	/>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+	<div class="row-12" style="text-align:center">
+	<img src="https://i.postimg.cc/pdsKMRCB/heading-1.png" class:"center" width:"100%">
+	</div>
+
+	<div class="container">
+		<div class="container">
+		<h1 class="text-center"><b>Vendor Record</b><h1>
+		<h5 class="text-center">Edit Vendor Details • New Intake Record</b></h5>
+
+
+		<hr/>
+
+		<div class="row row-cols-1 row-cols-md-2 g-4 border-dark">
+			<div class="col-lg-2">
+				<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
+					<path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+				</svg> 
+			</div>
+			<div class="col-lg-10">
+				<h2><b> {{ vendor.contact_name }} </b></h2>
+				<h4><b> {{ vendor.company_name }} </b></h4>
+				<h4>{{ vendor.entity_role }} </h4>
+				<h4>{{ vendor.email }} • {{ vendor.phone }}</h4>
+
+			</div>
+		</div>
+		
+		<hr/>
+
+		<h2 class="text-center"> Record Summary </h2>
+
+		
+		<hr/>
+
+		<h3 class="card-title">Intake Transactions</h3>
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th>Date</th>
+					<th>Product Name</th>
+					<th>SKU</th>
+					<th>Initial Unit Count</th>
+					<th>Cost/Unit</th>
+					<th>Licensing Fee</th>
+					<th>Total COGS</th>
+					<th>Staff/Broker</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for intake in vendor.intakes %}
+				<tr>
+					<td>{{ intake.date }}</td>
+					<td>{{ intake.product.product_name }}</td>
+					<td>{{ intake.sku }}</td>
+					<td>{{ intake.initial_unit_count }}</td>
+					<td>{{ intake.cost_per_unit }}</td>
+					<td>{{ intake.licensing_fee }}</td>
+					<td>{{ intake.get_intake_cog() }}</td>
+					<td>{{ intake.staff.staff_name }}</td>
+				</tr>
+				{%endfor%}
+			</tbody>
+		</table>
+
+	{% endblock %}
+</body>
