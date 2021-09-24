@@ -1,7 +1,32 @@
 <!DOCTYPE html>
 {% extends "base.html" %} {% import "bootstrap/wtf.html" as wtf %} {% block
 head%}
-<style></style>
+
+<style>
+	hr {
+		margin-top: 1rem;
+		margin-bottom: 1rem;
+		width: 100%;
+		border: 100%%;
+		border-top: 1px solid rgba(0, 0, 0, 0.1);
+		padding-right: -30px;
+		}
+	div.customer {
+		border: 1px solid rgba(0, 0, 0, 0.1);
+		padding-right: -30px;
+	}
+	td, th {
+		border: 1px solid #dddddd;
+		text-align: left;
+		padding: 8px;
+		}
+	div.sample {
+		border: 1px solid #dddddd;
+		text-align: left;
+		padding: 8px;
+	}
+
+</style>
 <script src="/static/js/modals.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 <link
@@ -12,33 +37,62 @@ head%}
 
 {% endblock %} {% block title %} Sale {% endblock %} {% block body %}
 
+<div class="row-12" style="text-align:center">
+<img src="https://i.postimg.cc/pdsKMRCB/heading-1.png" class:"center" width:"100%">
+</div>
+
+
 <div class="container">
-	<h1>Sale Record - Invoice Number: {{ sale_instance.invoice_no }}</h1>
-	<h2>Date: {{ sale_instance.date }}</h2>
-	<div>
-		<h2> Customer: {{ entity_info.company_name }} - {{ entity_info.contact_name }} </h2>
-		<h3> Contact Info: </h3>
-		<h4> Email: {{ entity_info.email }}</h4>
-		<h4> Phone: {{ entity_info.phone }}</h4>
-		<h4> Notes on Customer: {{ entity_info.notes }}</h4>
+	<h1 class="text-center"><b>Sale Record</b><h1>
+	<h5 class="text-center">Edit Sale Details • Edit Vendor Details</b></h5>
+	<hr/>
+</div>
+
+
+<div class="container">
+	<div class="row row-cols-1 row-cols-md-2 g-4 border-dark">
+		<div class="col-lg-2">
+			<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" fill="currentColor" class="bi bi-cart" viewBox="0 0 16 16">
+				<path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+			</svg>
+		</div>
+		<div class="col-lg-10">
+			<h2><b>Invoice: {{ sale_instance.invoice_no }}</b></h2>
+			<h4><b>Customer: {{ entity_info.company_name }} - {{ entity_info.contact_name }} </b></h4>
+			<h4>Purchase Date: {{ sale_instance.date }} </h4>
+			<h4>Handler: {{ sale_instance.staff.staff_name }} </h4>
+
+		</div>
 	</div>
-	<h2>Staff/Seller: {{ staff_info.staff_name }} </h2>
-	<h2>Notes on Sale:</h2>
-	<p> Discount/Premium Percentage applied to all items: {{ sale_instance.prem_disc_percentage }} % </h2> </p>
-	
-	<p></p>
-	<div>
-		<h3 style="display: inline-block; margin: 0">Sale Items</h3>
-		<button
-			type="button"
-			class="btn btn-add"
-			data-toggle="modal"
-			data-target="#saleModal1"
-		>
-			<span class="btn-icon-add"><i class="glyphicon glyphicon-plus"></i></span
-			>Add Item to Sale Record
-		</button>
-	</div>
+	<div class="row row-cols-1 row-cols-md-2 g-4 border-dark">
+		<div class="col-lg-8">
+		<h2>Staff/Seller: {{ staff_info.staff_name }} </h2>
+		<h2>Notes on Sale:</h2>
+		<p> Discount/Premium Percentage applied to all items: {{ sale_instance.prem_disc_percentage }} %</p>
+		</div>
+		<div class="customer col-lg-4">
+			<h4>Customer Details</h4>
+			<hr/>
+			<h5>Contact: {{ entity_info.contact_name }}</h5>
+			<h5>Company: {{ entity_info.company_name }}</h5>
+			<h5> Email: {{ entity_info.email }}</h5>
+			<h5> Phone: {{ entity_info.phone }}</h5>
+			<h5> Notes on Customer: {{ entity_info.notes }}</h5>
+		</div>
+		</div>
+		<p></p>
+		<div>
+			<h3 style="display: inline-block; margin: 0">Sale Items</h3>
+			<button
+				type="button"
+				class="btn btn-add"
+				data-toggle="modal"
+				data-target="#saleModal1"
+			>
+				<span class="btn-icon-add"><i class="glyphicon glyphicon-plus"></i></span
+				>Add Item to Sale Record
+			</button>
+		</div>
 
 	<!-- add Modal code here-->
 	<div
