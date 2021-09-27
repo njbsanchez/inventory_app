@@ -55,13 +55,19 @@ class addintake(FlaskForm):
     # Selling Info
     product_id = SelectField('Product Category', choices=[], coerce=int, option_widget=None) #https://stackoverflow.com/questions/12850605/how-do-i-generate-dynamic-fields-in-wtforms/18324514
     sku = StringField('SKU', [validators.DataRequired()])
-    selling_price = FloatField('Selling Price per Unit', [validators.DataRequired()])
+    type_key = SelectField(u'Product Type', default=0, choices=[("indoor", "indoor"),
+                                                                ("dep", "dep"),
+                                                                ("outdoor", "outdoor"),
+                                                                ("exotic", "exotic"),
+                                                                ("misc", "misc")
+                                                                ])                                                            
     notes = TextField('Notes')
     
     #Purchase Info
     init_unitcount = IntegerField('Intake Amount', [validators.NumberRange(min=1, max=1000000), validators.DataRequired()])
     cost_perunit = FloatField('$ Cost per Unit', [validators.DataRequired()])
     licensingfee = FloatField('Licensing Fee', [validators.DataRequired()])
+    broker_fee = FloatField('Broker Fee', [validators.DataRequired()])
     supplier = SelectField('Supplier', choices=[], coerce=int, option_widget=None, validate_choice=True) #https://stackoverflow.com/questions/12850605/how-do-i-generate-dynamic-fields-in-wtforms/18324514
     staff_id = SelectField('Intake Staff', choices=[], coerce=int, option_widget=None, validate_choice=True) #https://stackoverflow.com/questions/12850605/how-do-i-generate-dynamic-fields-in-wtforms/18324514
     intakesubmit = SubmitField('Save Intake')
