@@ -329,9 +329,8 @@ class Intake(db.Model):
     
     # REF: Product Info
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    
+    type_key = db.Column(db.String(18), nullable=False)
     sku = db.Column(db.String(12), nullable=False)
-    selling_price = db.Column(db.Float(10), nullable=False)
     notes = db.Column(db.Text)
     
     # REF: Intake Info
@@ -340,8 +339,10 @@ class Intake(db.Model):
     licensing_fee = db.Column(db.Float(10), nullable=False)
     entity_id = db.Column(db.Integer(), db.ForeignKey(Entity.id))
     
-    #REF: Staff Info
+    #REF: Admin Info
     staff_id = db.Column(db.Integer(), db.ForeignKey(Staff.id))
+    broker_fee = db.Column(db.Float(10), nullable=False)
+    
     items = db.relationship("Item", backref='intake_instance')
     sample_items = db.relationship("SampleItem", backref='intake_instance')
 
