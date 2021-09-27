@@ -387,7 +387,7 @@ class Sale(db.Model):
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     invoice_no = db.Column(db.String, nullable=False)
     date = db.Column(db.Date, nullable=False)
-    prem_disc_percentage =  db.Column(db.Integer, nullable=False)
+
     wiring_fee = db.Column(db.Float(10), nullable=False)
     
     #REF: Customer Info
@@ -482,6 +482,42 @@ class Item(db.Model):
         sub_total = quantity * new_price
         
         return sub_total
+
+class SaleAddOns(db.Model):  
+    
+    #Item info
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    sale_id = db.Column(db.Integer(), db.ForeignKey(Sale.id), nullable=False)
+    
+    notes = db.Column(db.Text)
+    
+    cogs = db.Column(db.Integer())
+    subtotal = db.Column(db.Integer())
+
+    #REF: Sale Info
+    sale_id = db.Column(db.Integer(), db.ForeignKey(Sale.id))
+    
+    def __repr__(self):
+        return f'SKU { self.intake_instance } ({ self.product })'
+
+    def __init__(self, product_id, intake_id, quantity, sale_id, notes="N/A"):
+        cogs = self.calculate_item_cogs(quantity, intake_id)
+        subtotal = self.calculate_subtotal(quantity, intake_id, sale_id)
+        self.product_id, self.intake_id, self.quantity, self.sale_id, self.notes, self.cogs, self.subtotal, self.notes= (product_id, intake_id, quantity, sale_id, notes, cogs, subtotal, notes)
+    
+    def calculate_item_cogs(self, quantity, intake_id):
+        
+        intake_instance = Intake.query.filter(Intake.id == intake_id).first()
+        
+        cost_per_unit = intake_instance.cost_per_unit
+        
+        print(cost_per_unit)
+        
+        licensing_per_unit = intake_instance.licensing_fee
+        
+        cogs_of_item = quantity * (cost_per_unit + licensing_per_unit)
+        
+        return cogs_of_item
 
 class Sample(db.Model):
     """TO DO"""
