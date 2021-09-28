@@ -2,8 +2,6 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
 import datetime
 
-
-
 db = SQLAlchemy()
 
 def connect_to_db(flask_app, dbname='inventory_psql', echo=False):  
@@ -194,9 +192,7 @@ class Staff(db.Model):
     phone = db.Column(db.String)
     notes = db.Column(db.Text)
     
-    intakes = db.relationship("Intake", backref='staff')
-    sales = db.relationship("Sale", backref='staff')
-    payments = db.relationship("Payment", backref='staff')
+    staff_transactions = db.relationship("StaffRelations", backref='staff_relations')
    
     def __repr__(self):
         return f'< Staff = {self.staff_name} Role = {self.role} >'
@@ -228,7 +224,7 @@ class Entity(db.Model):
     def __init__(self, contact_name, entity_role, company_name=None, entity_type="MJ", email=None, phone=None, notes="N/A"):
         if company_name == None:
             company_name = contact_name
-        self.contact_name, self.company_name, self.entity_type, self.entity_role, self.notes, self.email, self.phone = (contact_name, company_name, entity_type, entity_role, notes, email, phone)       
+            self.contact_name, self.company_name, self.entity_type, self.entity_role, self.notes, self.email, self.phone = (contact_name, company_name, entity_type, entity_role, notes, email, phone)       
 
     def get_sum_of_sales(self):
         
@@ -298,6 +294,9 @@ def get_all_entities():
     """Returns intake related to SKU"""
     return Entity.query.all()
 
+
+
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~           
 # Inventory models
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -329,9 +328,8 @@ class Intake(db.Model):
     
     # REF: Product Info
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    
+    type_key = db.Column(db.String(18), nullable=False)
     sku = db.Column(db.String(12), nullable=False)
-    selling_price = db.Column(db.Float(10), nullable=False)
     notes = db.Column(db.Text)
     
     # REF: Intake Info
@@ -340,16 +338,14 @@ class Intake(db.Model):
     licensing_fee = db.Column(db.Float(10), nullable=False)
     entity_id = db.Column(db.Integer(), db.ForeignKey(Entity.id))
     
-    #REF: Staff Info
-    staff_id = db.Column(db.Integer(), db.ForeignKey(Staff.id))
     items = db.relationship("Item", backref='intake_instance')
     sample_items = db.relationship("SampleItem", backref='intake_instance')
 
     def __repr__(self):
         return f'{self.sku}'
 
-    def __init__(self, date, sku, product_id, selling_price, initial_unit_count, cost_per_unit, licensing_fee, entity_id, staff_id, notes="N/A"):
-        self.date, self.sku, self.product_id, self.selling_price, self.initial_unit_count, self.cost_per_unit, self.licensing_fee, self.entity_id, self.staff_id, self.notes = (date, sku, product_id, selling_price, initial_unit_count, cost_per_unit, licensing_fee, entity_id, staff_id, notes)
+    def __init__(self, date, sku, product_id, type_key, initial_unit_count, cost_per_unit, licensing_fee, broker_fee, entity_id, notes="N/A"):
+        self.date, self.sku, self.product_id, self.type_key, self.initial_unit_count, self.cost_per_unit, self.licensing_fee, self.broker_fee, self.entity_id, self.notes = (date, sku, product_id, type_key, initial_unit_count, cost_per_unit, licensing_fee, broker_fee, entity_id, notes)
 
     def get_intake_cog(self):
         """Returns intake cog related to SKU"""
@@ -387,14 +383,13 @@ class Sale(db.Model):
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     invoice_no = db.Column(db.String, nullable=False)
     date = db.Column(db.Date, nullable=False)
-    prem_disc_percentage =  db.Column(db.Integer, nullable=False)
+
     wiring_fee = db.Column(db.Float(10), nullable=False)
     
     #REF: Customer Info
     entity_id = db.Column(db.Integer(), db.ForeignKey(Entity.id))
     
     #REF: Staff Info
-    staff_id = db.Column(db.Integer(), db.ForeignKey(Staff.id))
     broker_fee = db.Column(db.Float(10), nullable=False)
     broker_fee_paid = db.Column(db.Boolean, default=False)
     
@@ -406,8 +401,8 @@ class Sale(db.Model):
     # def __repr__(self):
     #     return f'<Customer = {self.name} Invoice = {self.invoice_no} Date = {self.date} >'
     
-    def __init__(self, invoice_no, date,  prem_disc_percentage, wiring_fee, entity_id, staff_id, broker_fee, broker_fee_paid, notes="N/A"):
-        self.invoice_no,self.date, self.prem_disc_percentage, self.wiring_fee, self.entity_id, self.staff_id, self.broker_fee, self.broker_fee_paid, self.notes = (invoice_no, date, prem_disc_percentage, wiring_fee, entity_id, staff_id, broker_fee, broker_fee_paid, notes)
+    def __init__(self, invoice_no, date,  prem_disc_percentage, wiring_fee, entity_id, broker_fee, broker_fee_paid, notes="N/A"):
+        self.invoice_no,self.date, self.prem_disc_percentage, self.wiring_fee, self.entity_id, self.broker_fee, self.broker_fee_paid, self.notes = (invoice_no, date, prem_disc_percentage, wiring_fee, entity_id, broker_fee, broker_fee_paid, notes)
     
     def get_cogs_sum(self):
         """internal - returns cog sum of all cart items from given sale"""
@@ -438,6 +433,7 @@ class Item(db.Model):
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     product_id = db.Column(db.Integer(), db.ForeignKey(Product.id), nullable=False)
     intake_id = db.Column(db.Integer(), db.ForeignKey(Intake.id))
+    sale_price = db.Column(db.Float(10), nullable=False)
     quantity = db.Column(db.Integer(), nullable = False)
     
     notes = db.Column(db.Text)
@@ -483,6 +479,42 @@ class Item(db.Model):
         
         return sub_total
 
+class SaleAddOns(db.Model):  
+    
+    #Item info
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    sale_id = db.Column(db.Integer(), db.ForeignKey(Sale.id), nullable=False)
+    
+    notes = db.Column(db.Text)
+    
+    cogs = db.Column(db.Integer())
+    subtotal = db.Column(db.Integer())
+
+    #REF: Sale Info
+    sale_id = db.Column(db.Integer(), db.ForeignKey(Sale.id))
+    
+    def __repr__(self):
+        return f'SKU { self.intake_instance } ({ self.product })'
+
+    def __init__(self, product_id, intake_id, quantity, sale_id, notes="N/A"):
+        cogs = self.calculate_item_cogs(quantity, intake_id)
+        subtotal = self.calculate_subtotal(quantity, intake_id, sale_id)
+        self.product_id, self.intake_id, self.quantity, self.sale_id, self.notes, self.cogs, self.subtotal, self.notes= (product_id, intake_id, quantity, sale_id, notes, cogs, subtotal, notes)
+    
+    def calculate_item_cogs(self, quantity, intake_id):
+        
+        intake_instance = Intake.query.filter(Intake.id == intake_id).first()
+        
+        cost_per_unit = intake_instance.cost_per_unit
+        
+        print(cost_per_unit)
+        
+        licensing_per_unit = intake_instance.licensing_fee
+        
+        cogs_of_item = quantity * (cost_per_unit + licensing_per_unit)
+        
+        return cogs_of_item
+
 class Sample(db.Model):
     """TO DO"""
     
@@ -496,13 +528,10 @@ class Sample(db.Model):
     #REF: Customer Info
     entity_id = db.Column(db.Integer(), db.ForeignKey(Entity.id))
     
-    #REF: Staff Info
-    staff_id = db.Column(db.Integer(), db.ForeignKey(Staff.id))
-    
     items = db.relationship("SampleItem", backref='sample')
     
-    def __init__(self, record_no, date, movement, entity_id, staff_id, notes="N/A"):
-        self.record_no, self.date, self.movement, self.entity_id, self.staff_id, self.notes = (record_no, date, movement, entity_id, staff_id, notes)
+    def __init__(self, record_no, date, movement, entity_id, notes="N/A"):
+        self.record_no, self.date, self.movement, self.entity_id, self.notes = (record_no, date, movement, entity_id, notes)
 
 class SampleItem(db.Model):
     
@@ -522,6 +551,7 @@ class SampleItem(db.Model):
     def __init__(self, product_id, intake_id, quantity, sample_record_id, notes="N/A"):
         self.product_id, self.intake_id, self.quantity, self.sample_record_id, self.notes = (product_id, intake_id, quantity, sample_record_id, notes)
 
+
 class Payment(db.Model):
     
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
@@ -531,7 +561,6 @@ class Payment(db.Model):
     entity_id = db.Column(db.Integer(), db.ForeignKey(Entity.id))
     
     #REF: Staff Info
-    staff_id = db.Column(db.Integer(), db.ForeignKey(Staff.id))
     amount_received = db.Column(db.Float(10), nullable=False)
     
     notes = db.Column(db.Text)
@@ -540,8 +569,26 @@ class Payment(db.Model):
     # def __repr__(self):
     #     return f'<Customer = {self.name} Invoice = {self.invoice_no} Date = {self.date} >'
     
-    def __init__(self, date, entity_id, staff_id, amount_received, notes="N/A"):
-        self.date, self.entity_id, self.staff_id, self.amount_received, self.notes = (date, entity_id, staff_id, amount_received, notes)
+    def __init__(self, date, entity_id, amount_received, notes="N/A"):
+        self.date, self.entity_id, self.amount_received, self.notes = (date, entity_id, amount_received, notes)
+
+class StaffRelations(db.Model):
+    
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    staff_id = db.Column(db.Integer(), db.ForeignKey(Staff.id))
+    broker_rate = db.Column(db.Float(10), nullable=False)
+    
+    intake_id = db.Column(db.Integer(), db.ForeignKey(Intake.id))
+    sale_id = db.Column(db.Integer(), db.ForeignKey(Sale.id))
+    sample_id = db.Column(db.Integer(), db.ForeignKey(Sample.id))
+    payment_id = db.Column(db.Integer(), db.ForeignKey(Payment.id))
+    
+    def __repr__(self):
+        return f'SKU { self.id } ({ self.staff })'
+
+    def __init__(self, staff_id, broker_rate, intake_id=None, sale_id=None, sample_id=None, payment_id=None):
+        self.staff_id, self.broker_rate, self.intake_id, self.sale_id, self.sample_id, self.payment_id = (staff_id, broker_rate, intake_id, sale_id, sample_id, payment_id)
+
 
 def get_sale_by_id(id):
     """Return sale with given ID."""

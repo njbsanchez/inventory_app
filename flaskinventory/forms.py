@@ -55,7 +55,12 @@ class addintake(FlaskForm):
     # Selling Info
     product_id = SelectField('Product Category', choices=[], coerce=int, option_widget=None) #https://stackoverflow.com/questions/12850605/how-do-i-generate-dynamic-fields-in-wtforms/18324514
     sku = StringField('SKU', [validators.DataRequired()])
-    selling_price = FloatField('Selling Price per Unit', [validators.DataRequired()])
+    type_key = SelectField(u'Product Type', default=0, choices=[("indoor", "I - Indoor"),
+                                                                ("dep", "D - Dep"),
+                                                                ("outdoor", "O - Outdoor"),
+                                                                ("exotic", "E - Exotic"),
+                                                                ("misc", "M - misc")
+                                                                ])                                                            
     notes = TextField('Notes')
     
     #Purchase Info
@@ -63,9 +68,16 @@ class addintake(FlaskForm):
     cost_perunit = FloatField('$ Cost per Unit', [validators.DataRequired()])
     licensingfee = FloatField('Licensing Fee', [validators.DataRequired()])
     supplier = SelectField('Supplier', choices=[], coerce=int, option_widget=None, validate_choice=True) #https://stackoverflow.com/questions/12850605/how-do-i-generate-dynamic-fields-in-wtforms/18324514
-    staff_id = SelectField('Intake Staff', choices=[], coerce=int, option_widget=None, validate_choice=True) #https://stackoverflow.com/questions/12850605/how-do-i-generate-dynamic-fields-in-wtforms/18324514
     intakesubmit = SubmitField('Save Intake')
 
+class addbroker(FlaskForm):
+    staff_id = SelectField('Intake Staff', choices=[], coerce=int, option_widget=None, validate_choice=True) #https://stackoverflow.com/questions/12850605/how-do-i-generate-dynamic-fields-in-wtforms/18324514   
+    broker_fee = FloatField('Broker Fee', [validators.DataRequired()])
+    sku = SelectField('SKU Number', choices=[], coerce=int, validate_choice=True)
+    sale_id = SelectField('Sale Instance', choices=[], coerce=int, validate_choice=True)
+    sample_id = SelectField('Sample Instance', choices=[], coerce=int, validate_choice=True)
+    brokersubmit = SubmitField('Add Broker')
+    
 class additem(FlaskForm):
     
     sku = SelectField('SKU Number', choices=[], coerce=int, validate_choice=True)
@@ -76,16 +88,6 @@ class additem(FlaskForm):
 class addsale(FlaskForm):
     invoice_no = StringField('Invoice Number', [validators.DataRequired()])
     date = DateField('Sale Date', format='%Y-%m-%d')
-    prem_disc = SelectField(u'If applying a discount or premium to sale, please select percentage option', default=0, choices=[(25, '+25%'), 
-                                                                            (20, '+20%'),
-                                                                            (15, '+15%'),
-                                                                            (10, '+10%'),
-                                                                            (5, '+5%'),
-                                                                            (0, "No Discount or Premium"),
-                                                                            (-5, '-5%'),
-                                                                            (-10, '-10%'),
-                                                                            (-15, '-15%'),
-                                                                            (-25, '-25%')])
     wiring_fee = FloatField('  Wiring Fee')
 
     entity = SelectField('  Customer', choices=[], coerce=int, option_widget=None, validate_choice=True)
@@ -104,7 +106,6 @@ class addpayment(FlaskForm):
     amount_received = FloatField('Broker Fee')
     notes = TextField('Notes')
     payment_submit = SubmitField('Proceed to Add Items')
-
 
 class addsample(FlaskForm):
     record_no = StringField('Record Number', [validators.DataRequired()])
