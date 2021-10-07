@@ -207,8 +207,6 @@ def show_intake():
                                  for product in Product.query.all()]
     form.supplier.choices = [(entity.id, entity.contact_name)
                                for entity in Entity.query.all()]
-    form.staff_id.choices = [(staff.id, staff.staff_name)
-                               for staff in Staff.query.all()]
 
     if exists == False and request.method == 'GET':
         flash(f'Add intake to view', 'info')
@@ -226,8 +224,7 @@ def show_intake():
                             cost_per_unit=form.cost_perunit.data,
                             licensing_fee=form.licensingfee.data,
                             broker_fee=form.broker_fee.data,
-                            entity_id=form.supplier.data,
-                            staff_id=form.staff_id.data)
+                            entity_id=form.supplier.data,)
 
         print(new_intake)
         db.session.add(new_intake)
