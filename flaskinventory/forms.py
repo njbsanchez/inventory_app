@@ -83,26 +83,21 @@ class additem(FlaskForm):
     sku = SelectField('SKU Number', choices=[], coerce=int, validate_choice=True)
     product_id = SelectField('Product Category', choices=[], coerce=int, option_widget=None) #https://stackoverflow.com/questions/12850605/how-do-i-generate-dynamic-fields-in-wtforms/18324514
     quantity = IntegerField('Quantity', [validators.NumberRange(min=1, max=1000000),validators.DataRequired()])
+    price = FloatField('Wiring Fee')
     itemsubmit = SubmitField('Add Item')
+    
     
 class addsale(FlaskForm):
     invoice_no = StringField('Invoice Number', [validators.DataRequired()])
     date = DateField('Sale Date', format='%Y-%m-%d')
-    wiring_fee = FloatField('  Wiring Fee')
-
-    entity = SelectField('  Customer', choices=[], coerce=int, option_widget=None, validate_choice=True)
-    
-    staff_id = SelectField('  Staff/Sales Associate', choices=[], coerce=int, option_widget=None, validate_choice=True)
-    broker_fee = FloatField('  Broker Fee')
-    broker_fee_paid = BooleanField('  Has Broker Fee been paid out?')
-    notes = TextField('  Notes')
-    
+    entity = SelectField('Customer', choices=[], coerce=int, option_widget=None, validate_choice=True)
+    wiring_fee = FloatField('Wiring Fee')    
+    notes = TextField('Notes')   
     salesubmit = SubmitField('Proceed to Add Items')
 
 class addpayment(FlaskForm):
     date = DateField('Payment Date', format='%Y-%m-%d')
     entity = SelectField('Customer', choices=[], coerce=int, option_widget=None, validate_choice=True)
-    staff_id = SelectField('Staff/Sales Associate', choices=[], coerce=int, option_widget=None, validate_choice=True)
     amount_received = FloatField('Broker Fee')
     notes = TextField('Notes')
     payment_submit = SubmitField('Proceed to Add Items')
@@ -114,7 +109,6 @@ class addsample(FlaskForm):
     entity = SelectField('Customer', choices=[], coerce=int, validate_choice=True)
     
     movement = SelectField(u'Sample Check Out or Sample Return?', choices=[('samplereturn', 'sample return'), ('sampleout', 'sample out')])
-    staff_id = SelectField('Seller/Staff', choices=[], coerce=int, validate_choice=True)
     
     # sample_items = FieldList(FormField(additem), min_entries=1) #https://stackoverflow.com/questions/30121763/how-to-use-a-wtforms-fieldlist-of-formfields
     notes = TextField('Notes')

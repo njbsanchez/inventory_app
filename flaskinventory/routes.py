@@ -40,115 +40,16 @@ def go_home():
     
     return render_template("home.html", latest_sales=latest_sales, latest_intakes=latest_intakes, broker_info=broker_info)
 
-#to delete
-# @app.route("/", methods=['POST'])
-# def home_action():
-    
-#     int_form = addintake()
-
-#     int_form.product_id.choices = [(product.id, product.product_name)
-#                                  for product in Product.query.all()]
-#     int_form.supplier.choices = [(entity.id, entity.contact_name)
-#                                for entity in Entity.query.all()]
-#     int_form.staff_id.choices = [(staff.id, staff.staff_name)
-#                                for staff in Staff.query.all()]
-
-#     if int_form.validate_on_submit():
-
-#         # return '<h1>' + form.product_id.data + form.sku.data + ' ' + form.init_unitcount.data + ' ' +  form.supplier.data + ' ' +  '</h1>'
-
-#         new_intake = Intake(date=int_form.date.data,
-#                             product_id=int_form.product_id.data,
-#                             sku=int_form.sku.data,
-#                             selling_price=int_form.selling_price.data,
-#                             notes=int_form.notes.data,
-#                             initial_unit_count=int_form.init_unitcount.data,
-#                             cost_per_unit=int_form.cost_perunit.data,
-#                             licensing_fee=int_form.licensingfee.data,
-#                             entity_id=int_form.supplier.data,
-#                             staff_id=int_form.staff_id.data)
-
-#         print(new_intake)
-#         db.session.add(new_intake)
-
-#         try:
-#             db.session.commit()
-#             print('added!')
-#             flash(f'Intake has been added!', 'success')
-#             return redirect(url_for('show_intake'))
-#         except sq.IntegrityError:
-#             db.session.rollback()
-#             print('failed!')
-#             flash(f'This product already exists.', 'danger')
-#             return redirect('/intake')
- 
-#     sale_form = addsale()
-
-#     sale_form.entity.choices = [(entity.id, entity.contact_name)
-#                                for entity in Entity.query.all()]
-#     sale_form.staff_id.choices = [(staff.id, staff.staff_name)
-#                                for staff in Staff.query.all()]
-
-#     if sale_form.validate_on_submit():
-
-#         # return '<h1>' + form.product_id.data + form.sku.data + ' ' + form.init_unitcount.data + ' ' +  form.supplier.data + ' ' +  '</h1>'
-        
-#         new_sale = Sale(  invoice_no=sale_form.invoice_no.data,
-#                           date=sale_form.date.data,
-#                           prem_disc_percentage=sale_form.prem_disc.data,
-#                           wiring_fee=sale_form.wiring_fee.data,
-#                           entity_id=sale_form.entity.data,
-#                           staff_id=sale_form.staff_id.data,
-#                           broker_fee=sale_form.broker_fee.data,
-#                           broker_fee_paid=sale_form.broker_fee_paid.data
-#                           )
-                          
-#         print(new_sale)
-#         db.session.add(new_sale)
-#         db.session.commit()
-        
-#         print('added!')
-#         flash(f'Sale has been recorded!', 'success')
-        
-#         return redirect(url_for('show_sale_record',sale_id=new_sale.id))
-    
-#     samp_form = addsample()
-
-#     samp_form.entity.choices = [(entity.id, entity.contact_name)
-#                                for entity in Entity.query.all()]
-#     samp_form.staff_id.choices = [(staff.id, staff.staff_name)
-#                                for staff in Staff.query.all()]
-
-#     if samp_form.validate_on_submit():
-
-#         # return '<h1>' + form.product_id.data + form.sku.data + ' ' + form.init_unitcount.data + ' ' +  form.supplier.data + ' ' +  '</h1>'
-        
-#         new_sample_record = Sample(  record_no=samp_form.record_no.data,
-#                           date=samp_form.date.data,
-#                           entity_id=samp_form.entity.data,
-#                           staff_id=samp_form.staff_id.data,
-#                           movement=samp_form.movement.data,
-#                           notes=samp_form.notes.data
-#                           )
-                          
-#         print(new_sample_record)
-#         db.session.add(new_sample_record)
-#         db.session.commit()
-        
-#         print('added!')
-#         flash(f'Sample has been recorded!', 'success')
-        
-#         return redirect(url_for('show_sample_record',sample_record_id=new_sample_record.id))
-  
 
 @app.route("/admin_new_user", methods=['GET', 'POST'])
 def signup():
     form = RegisterForm()
 
     if form.validate_on_submit():
-        return '<h1>' + form.username.data + ' ' + form.email.data + ' ' + form.password.data + '</h1>'
+        # return '<h1>' + form.username.data + ' ' + form.email.data + ' ' + form.password.data + '</h1>'
         new_user = User(username=form.username.data,
-                        email=form.email.data, password=form.password.data)
+                        email=form.email.data, 
+                        password=form.password.data)
         db.session.add(new_user)
         db.session.commit()
 
@@ -198,6 +99,31 @@ def show_product():
 def show_intake():
     """list staff/add staff."""
     
+    p_form = addproduct(csrf_enabled=True)
+    p_details = Product.query.all()
+    p_exists = bool(Product.query.all())
+
+    if p_exists == False and request.method == 'GET':
+        flash(f'Add product to view', 'info')
+
+    if p_form.validate_on_submit():
+
+        prodname = p_form.prodname.data
+        prod_desc = p_form.prod_desc.data
+
+        new_prod = Product(prodname, prod_desc)
+        db.session.add(new_prod)
+
+        try:
+            db.session.commit()
+            print('added!')
+            flash(f'{p_form.prodname} has been added!', 'success')
+            return redirect(url_for('show_intake'))
+        except sq.IntegrityError:
+            db.session.rollback()
+            flash(f'This product already exists.', 'danger')
+            return redirect('/intake')
+    
     details = Intake.query.all()
     exists = bool(Intake.query.all())
     
@@ -207,8 +133,8 @@ def show_intake():
                                  for product in Product.query.all()]
     form.supplier.choices = [(entity.id, entity.contact_name)
                                for entity in Entity.query.all()]
-    form.staff_id.choices = [(staff.id, staff.staff_name)
-                               for staff in Staff.query.all()]
+    # form.staff_id.choices = [(staff.id, staff.staff_name)
+    #                            for staff in Staff.query.all()]
 
     if exists == False and request.method == 'GET':
         flash(f'Add intake to view', 'info')
@@ -226,8 +152,7 @@ def show_intake():
                             cost_per_unit=form.cost_perunit.data,
                             licensing_fee=form.licensingfee.data,
                             broker_fee=form.broker_fee.data,
-                            entity_id=form.supplier.data,
-                            staff_id=form.staff_id.data)
+                            entity_id=form.supplier.data)
 
         print(new_intake)
         db.session.add(new_intake)
@@ -244,7 +169,7 @@ def show_intake():
             return redirect('/intake')
 
     print (form.errors)
-    return render_template("intake.html", details=details, form=form)
+    return render_template("intake.html", details=details, form=form, p_details=p_details, p_form=p_form)
 
 
 @app.route("/inventory/", methods=['GET'])
