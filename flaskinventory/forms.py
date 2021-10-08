@@ -48,6 +48,16 @@ class addproduct(FlaskForm):
     prod_desc = TextField('Notes')
     prodsubmit = SubmitField('Save Changes')
 
+class addaddon(FlaskForm):
+    
+    add_on_type = SelectField(u'Transaction Type', default=0, choices=[("broker", "Broker Fee"),
+                                                                ("licensing", "Licensing Fee"),
+                                                                ("misc", "Miscellaneous Fee")
+                                                                ])                                                            
+    amount = FloatField('$ Amount', [validators.DataRequired()])
+    notes = TextField('Notes')
+    addon_submit = SubmitField('Save Intake')
+
 class addintake(FlaskForm):
     
     date = DateField('Intake Date (format: 12-24-2000)', format='%Y-%m-%d')
@@ -67,6 +77,7 @@ class addintake(FlaskForm):
     init_unitcount = IntegerField('Intake Amount', [validators.NumberRange(min=1, max=1000000), validators.DataRequired()])
     cost_perunit = FloatField('$ Cost per Unit', [validators.DataRequired()])
     licensingfee = FloatField('Licensing Fee', [validators.DataRequired()])
+    brokerfee = FloatField('Broker Fee', [validators.DataRequired()])
     supplier = SelectField('Supplier', choices=[], coerce=int, option_widget=None, validate_choice=True) #https://stackoverflow.com/questions/12850605/how-do-i-generate-dynamic-fields-in-wtforms/18324514
     intakesubmit = SubmitField('Save Intake')
 

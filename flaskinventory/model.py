@@ -334,23 +334,36 @@ class Intake(db.Model):
     initial_unit_count = db.Column(db.Integer, nullable=False)  # intial amount; managed in a separate form
     cost_per_unit = db.Column(db.Float(10), nullable=False)
     licensing_fee = db.Column(db.Float(10), nullable=False)
+    broker_fee = db.Column(db.Float(10), nullable=False)
     entity_id = db.Column(db.Integer(), db.ForeignKey(Entity.id))
     
     items = db.relationship("Item", backref='intake_instance')
     sample_items = db.relationship("SampleItem", backref='intake_instance')
-
+    addons = db.relationship("AddOns", backref='intake_instance')
     def __repr__(self):
         return f'{self.sku}'
 
     def __init__(self, date, sku, product_id, type_key, initial_unit_count, cost_per_unit, licensing_fee, broker_fee, entity_id, notes="N/A"):
         self.date, self.sku, self.product_id, self.type_key, self.initial_unit_count, self.cost_per_unit, self.licensing_fee, self.broker_fee, self.entity_id, self.notes = (date, sku, product_id, type_key, initial_unit_count, cost_per_unit, licensing_fee, broker_fee, entity_id, notes)
 
+    def calculate_addon_total(self):
+        
+        total = 0
+        for item in self.addons:
+            total += item.amount
+            
+        return total
+    
     def get_intake_cog(self):
         """Returns intake cog related to SKU"""
         
-        total_cog = (self.cost_per_unit + self.licensing_fee) * self.initial_unit_count
+        addon_total = self.get_intake_cog()
+        
+        total_cog = addon_total + (self.cost_per_unit * self.initial_unit_count)
         
         return total_cog
+    
+
 
 def get_all_products():
     """Returns intake related to SKU"""
@@ -467,36 +480,26 @@ class Item(db.Model):
         
         return sub_total
 
-class SaleAddOns(db.Model):  
+class AddOns(db.Model):  
     
     #Item info
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    sale_id = db.Column(db.Integer(), db.ForeignKey(Sale.id), nullable=False)
-    
+    transaction_type = db.Column(db.String(12), nullable=False)
+    add_on_type = db.Column(db.String(12), nullable=False)
+    amount = db.Column(db.Float(10), nullable=False)
+
     notes = db.Column(db.Text)
     
-    cogs = db.Column(db.Integer())
-    subtotal = db.Column(db.Integer())
-
     #REF: Sale Info
     sale_id = db.Column(db.Integer(), db.ForeignKey(Sale.id))
+    intake_id = db.Column(db.Integer(), db.ForeignKey(Intake.id))
     
     def __repr__(self):
-        return f'SKU { self.intake_instance } ({ self.product })'
+        return f'SKU { self.id } ({ self.transaction_type })'
 
-    def __init__(self, product_id, intake_id, quantity, sale_id, notes="N/A"):
-        cogs = self.calculate_item_cogs(quantity, intake_id)
-        subtotal = self.calculate_subtotal(quantity, intake_id, sale_id)
-        self.product_id, self.intake_id, self.quantity, self.sale_id, self.notes, self.cogs, self.subtotal, self.notes= (product_id, intake_id, quantity, sale_id, notes, cogs, subtotal, notes)
-    
-    def calculate_item_cogs(self, quantity, intake_id):
-        
-        intake_instance = Intake.query.filter(Intake.id == intake_id).first()
-        cost_per_unit = intake_instance.cost_per_unit
+    def __init__(self, transaction_type, add_on_type, amount, sale_id, intake_id, notes="N/A"):
+        self.transaction_type, self.add_on_type, self.amount, sale_id, intake_id, self.notes= (transaction_type, add_on_type, amount, sale_id, intake_id, notes)
 
-        licensing_per_unit = intake_instance.licensing_fee
-        cogs_of_item = quantity * (cost_per_unit + licensing_per_unit)
-        return cogs_of_item
 
 class Sample(db.Model):
     """TO DO"""

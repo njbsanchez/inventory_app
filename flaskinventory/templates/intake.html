@@ -23,7 +23,7 @@
 	<div class="container my-2">
 		<h1 style="text-align:center"><b>Product and Intake Transactions</b></h1>
 		<div class="row">
-			<div class="col-sm-8">
+			<div class="col-sm-12">
 				<h3 style="text-align:center"><b>All Intake Transactions</b></h3>
 				<div style="text-align:center">
 					<button
@@ -92,13 +92,16 @@
 										{{wtf.form_field(form.notes)}} {{
 										wtf.form_field(form.init_unitcount) }} {{
 										wtf.form_field(form.cost_perunit) }} {{
-										wtf.form_field(form.licensingfee) }} 
+										wtf.form_field(form.licensingfee) }} {{
+										wtf.form_field(form.brokerfee) }}
 										<div class="form-group required">
 											<label class="control-label" for="supplier"
 												>Supplier Contact Name</label
 											>
 											<p></p>
 											{{ form.supplier }}
+											<p></p>
+											<p><i>If supplier does not appear in drop down, <a href="/vendor/">add Vendor Here</a></i><p>
 											<p></p>
 										</div>
 									</div>
@@ -122,11 +125,12 @@
 					<thead>
 						<tr>
 							<th>Date</th>
+							<th>Product Name</th>
 							<th>SKU</th>
+							<th>Type Key</th>
 							<th>Vendor</th>
 							<th>Initial Unit Count</th>
 							<th>Cost per Unit</th>
-							<th>Selling Price</th>
 							<th>Actions</th>
 						</tr>
 					</thead>
@@ -134,11 +138,12 @@
 						{% for p in details %}
 						<tr>
 							<td>{{p.date}}</td>
+							<td>{{p.product.product_name}}</td>
 							<td>{{p.sku}}</td>
+							<td>{{p.type_key}}</td>
 							<td>{{p.entity.contact_name}}</td>
 							<td>{{p.initial_unit_count}}</td>
 							<td>{{p.cost_per_unit}}</td>
-							<td>{{p.selling_price}}</td>
 							<td>
 								<a href="/{{ p.entity.id }}" class="btn btn-primary">Vendor Detail</a>
 							</td>
@@ -147,7 +152,9 @@
 					</tbody>
 				</table>
 			</div>
-			<div class="col-sm-4">
+		</div>
+		<div class="row">
+			<div class="col-sm-6">
 				<div class="card m-2">
 					<div class="card-body">
 						<h3 style="text-align:center">Product</h3>
@@ -219,6 +226,10 @@
 							</tbody>
 						</table>
 					</div>
+				</div>
+			</div>
+			<div class="col-sm-6">
+				<div class="card m-2">
 				</div>
 			</div>
 		</div>

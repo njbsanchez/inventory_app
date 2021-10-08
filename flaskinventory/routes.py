@@ -133,11 +133,6 @@ def show_intake():
                                  for product in Product.query.all()]
     form.supplier.choices = [(entity.id, entity.contact_name)
                                for entity in Entity.query.all()]
-<<<<<<< HEAD
-=======
-    # form.staff_id.choices = [(staff.id, staff.staff_name)
-    #                            for staff in Staff.query.all()]
->>>>>>> 7cb16ec79499ac6dbf42b47f8d296da548dab745
 
     if exists == False and request.method == 'GET':
         flash(f'Add intake to view', 'info')
