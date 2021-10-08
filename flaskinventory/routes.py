@@ -155,11 +155,7 @@ def show_intake():
                             cost_per_unit=form.cost_perunit.data,
                             licensing_fee=form.licensingfee.data,
                             broker_fee=form.broker_fee.data,
-<<<<<<< HEAD
                             entity_id=form.supplier.data,)
-=======
-                            entity_id=form.supplier.data)
->>>>>>> 7cb16ec79499ac6dbf42b47f8d296da548dab745
 
         print(new_intake)
         db.session.add(new_intake)
