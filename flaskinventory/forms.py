@@ -45,18 +45,30 @@ class AddEntity(FlaskForm):
 
 class addproduct(FlaskForm):
     prodname = StringField('Product Name', [validators.DataRequired()])
-    prod_desc = TextField('Notes')
+    prod_desc = TextField('Description')
+    notes = TextField('Notes')
     prodsubmit = SubmitField('Save Changes')
 
-class addaddon(FlaskForm):
+class AddAddOn(FlaskForm):
     
-    add_on_type = SelectField(u'Transaction Type', default=0, choices=[("broker", "Broker Fee"),
+    add_on_type = SelectField(u'Additional Fee Type', default=0, choices=[
                                                                 ("licensing", "Licensing Fee"),
+                                                                ("wiring", "Wiring Fees"),
+                                                                ("transportation", "Transportation Fees"),
                                                                 ("misc", "Miscellaneous Fee")
                                                                 ])                                                            
     amount = FloatField('$ Amount', [validators.DataRequired()])
     notes = TextField('Notes')
     addon_submit = SubmitField('Save Intake')
+    
+class AddStaffRelations(FlaskForm):
+    
+    staff_id = SelectField('Intake Staff', choices=[], coerce=int, option_widget=None, validate_choice=True) #https://stackoverflow.com/questions/12850605/how-do-i-generate-dynamic-fields-in-wtforms/18324514   
+    broker_fee = FloatField('Broker Fee')
+    broker_fee_paid = BooleanField('Has the Broker been paid?')
+   
+    notes = TextField('Notes')
+    addrelation_submit = SubmitField('Save Staff Relation')
 
 class addintake(FlaskForm):
     
@@ -76,8 +88,8 @@ class addintake(FlaskForm):
     #Purchase Info
     init_unitcount = IntegerField('Intake Amount', [validators.NumberRange(min=1, max=1000000), validators.DataRequired()])
     cost_perunit = FloatField('$ Cost per Unit', [validators.DataRequired()])
-    licensingfee = FloatField('Licensing Fee', [validators.DataRequired()])
-    brokerfee = FloatField('Broker Fee', [validators.DataRequired()])
+    # licensingfee = FloatField('Licensing Fee', [validators.DataRequired()])
+    # brokerfee = FloatField('Broker Fee', [validators.DataRequired()])
     supplier = SelectField('Supplier', choices=[], coerce=int, option_widget=None, validate_choice=True) #https://stackoverflow.com/questions/12850605/how-do-i-generate-dynamic-fields-in-wtforms/18324514
     intakesubmit = SubmitField('Save Intake')
 

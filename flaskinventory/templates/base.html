@@ -12,6 +12,9 @@
 				margin-top: 1px;
 				margin-bottom: 1px;
 			}
+			table {
+				table-layout:fixed;
+			}
 		</style>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width" />
@@ -193,6 +196,15 @@
 				</div>
 			</div>
 		</nav>
+		{% with messages = get_flashed_messages() %}
+		{% if messages %}
+			<ul class=flashes>
+			{% for message in messages %}
+			<li>{{ message }}</li>
+			{% endfor %}
+			</ul>
+		{% endif %}
+		{% endwith %}
 	</header>
 	<body>
 		{% block body %} {% endblock %} {% block after_body%}

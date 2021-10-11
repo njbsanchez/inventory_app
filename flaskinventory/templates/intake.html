@@ -91,9 +91,7 @@
 										</div>
 										{{wtf.form_field(form.notes)}} {{
 										wtf.form_field(form.init_unitcount) }} {{
-										wtf.form_field(form.cost_perunit) }} {{
-										wtf.form_field(form.licensingfee) }} {{
-										wtf.form_field(form.brokerfee) }}
+										wtf.form_field(form.cost_perunit) }}
 										<div class="form-group required">
 											<label class="control-label" for="supplier"
 												>Supplier Contact Name</label
@@ -145,7 +143,8 @@
 							<td>{{p.initial_unit_count}}</td>
 							<td>{{p.cost_per_unit}}</td>
 							<td>
-								<a href="/{{ p.entity.id }}" class="btn btn-primary">Vendor Detail</a>
+								<a href="/vendor/{{ p.entity.id }}" class="btn btn-primary">Vendor Detail</a>
+								<a href="/intake/{{ p.entity.id }}" class="btn btn-success">Intake Detail</a>
 							</td>
 						</tr>
 						{%endfor%}
@@ -184,6 +183,7 @@
 											{{ wtf.form_errors(p_form, hiddens="only") }}
 											{{ wtf.form_field(p_form.prodname) }}
 											{{ wtf.form_field(p_form.prod_desc) }}
+											{{ wtf.form_field(p_form.notes) }}
 											</div>
 											<div class="modal-footer">
 												<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

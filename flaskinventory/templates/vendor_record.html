@@ -80,9 +80,7 @@
 					<th>SKU</th>
 					<th>Initial Unit Count</th>
 					<th>Cost/Unit</th>
-					<th>Licensing Fee</th>
 					<th>Total COGS</th>
-					<th>Staff/Broker</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -93,9 +91,7 @@
 					<td>{{ intake.sku }}</td>
 					<td>{{ intake.initial_unit_count }}</td>
 					<td>{{ intake.cost_per_unit }}</td>
-					<td>{{ intake.licensing_fee }}</td>
 					<td>{{ intake.get_intake_cog() }}</td>
-					<td>{{ intake.staff.staff_name }}</td>
 				</tr>
 				{%endfor%}
 			</tbody>

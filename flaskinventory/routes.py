@@ -1,8 +1,8 @@
 from flaskinventory.crud import calculate_quantity_instock
 from flask import render_template, url_for, redirect, flash, request, jsonify
 # additem, addsale, recordsample,
-from flaskinventory.forms import AddStaff, addpayment, AddEntity, addproduct, addintake, LoginForm, RegisterForm, additem, addsample, addsampleitem, addsale
-from flaskinventory.model import db, Payment, User, Staff, Entity, Product, Intake, Sale, Item, Sample, SampleItem
+from flaskinventory.forms import AddAddOn, AddStaffRelations, AddStaff, addpayment, AddEntity, addproduct, addintake, LoginForm, RegisterForm, additem, addsample, addsampleitem, addsale
+from flaskinventory.model import db, AddOns, Payment, User, Staff, Entity, Product, Intake, Sale, Item, Sample, SampleItem
 from flask_bootstrap import Bootstrap
 from flaskinventory.app import app
 from flask_bootstrap import Bootstrap
@@ -13,7 +13,6 @@ import flaskinventory.crud as crud
 import sqlalchemy.exc as sq
 
 bootstrap = Bootstrap(app)
-
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
@@ -148,8 +147,6 @@ def show_intake():
                             notes=form.notes.data,
                             initial_unit_count=form.init_unitcount.data,
                             cost_per_unit=form.cost_perunit.data,
-                            licensing_fee=form.licensingfee.data,
-                            broker_fee=form.broker_fee.data,
                             entity_id=form.supplier.data,)
 
         print(new_intake)
@@ -159,7 +156,8 @@ def show_intake():
             db.session.commit()
             print('added!')
             flash(f'Intake has been added!', 'success')
-            return redirect(url_for('show_intake'))
+            return redirect(url_for('show_intake_record',intake_id=new_intake.id))
+
         except sq.IntegrityError:
             db.session.rollback()
             print('failed!')
@@ -168,6 +166,80 @@ def show_intake():
 
     print (form.errors)
     return render_template("intake.html", details=details, form=form, p_details=p_details, p_form=p_form)
+
+@app.route("/intake/<intake_id>", methods=['GET', 'POST'])
+def show_intake_record(intake_id):
+    """list intake details."""
+    
+    intake_instance = Intake.query.filter(Intake.id == intake_id).first()
+    
+    entity_info = Entity.query.filter(Entity.id==intake_instance.entity_id).first()
+
+    details = intake_instance.addons
+    
+    exists = bool(details)
+    
+    form = AddAddOn()
+    
+    if exists == False and request.method == 'GET':
+        flash(f'Add sale items to view', 'info')
+
+    if form.validate_on_submit():
+
+        # return '<h1>' + form.product_id.data + form.sku.data + ' ' + form.init_unitcount.data + ' ' +  form.supplier.data + ' ' +  '</h1>'
+        
+        new_addon = AddOns(transaction_type="intake",
+                          add_on_type=form.add_on_type.data,
+                          amount=form.amount.data,
+                          sale_id=None,
+                          intake_id=intake_id,
+                          notes=form.notes.data,
+                        )
+                          
+        db.session.add(new_addon)
+        db.session.commit()
+        
+        print('added!')
+        flash(f'Item has been added!', 'success')
+        
+        
+        return redirect(url_for('show_intake_record',intake_id=intake_id))
+    
+    staff = intake_instance.staff_relations
+    
+    s_exists = bool(staff)
+    
+    s_form = AddStaffRelations()
+    
+    s_form.staff_id.choices = [(staff.id, staff.staff_name)
+                               for staff in Staff.query.all()]
+    
+    if s_exists == False and request.method == 'GET':
+        flash(f'Remember to add staff!', 'info')   
+    
+    if form.validate_on_submit():
+    
+        # return '<h1>' + form.product_id.data + form.sku.data + ' ' + form.init_unitcount.data + ' ' +  form.supplier.data + ' ' +  '</h1>'
+        
+        new_staffrelation = AddStaffRelations(transaction_type="intake",
+                          add_on_type=form.add_on_type.data,
+                          amount=form.amount.data,
+                          sale_id=None,
+                          intake_id=intake_id,
+                          notes=form.notes.data,
+                        )
+                          
+        db.session.add(new_addon)
+        db.session.commit()
+        
+        print('added!')
+        flash(f'Item has been added!', 'success')
+        
+        
+        return redirect(url_for('show_intake_record',intake_id=intake_id))
+
+    print (form.errors)
+    return render_template("intake_record.html",details=details, staff=staff, entity_info=entity_info, intake_instance=intake_instance, form=form, s_form=s_form, intake_id=intake_id)
 
 
 @app.route("/inventory/", methods=['GET'])
@@ -311,12 +383,15 @@ def show_vendors():
             db.session.commit()
             print('added!')
             flash(f'Entity has been added!', 'success')
-            return redirect(url_for('show_vendors'))
+            return redirect(url_for('show_vendor_record',entity_id=new_entity.id))
         except sq.IntegrityError:
             db.session.rollback()
-            flash(f'This staff member already exists.', 'danger')
-            return redirect('/show_vendors')
+            flash(f'This entity already exists.', 'danger')
+            return redirect('/vendor/')
+        
     print (form.errors)
+    if form.errors:
+        flash("See the following for submission errors:", form.errors)
     return render_template("vendor.html", details=details, form=form)
 
 @app.route("/vendor/<entity_id>", methods=['GET'])
