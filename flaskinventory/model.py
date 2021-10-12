@@ -407,31 +407,31 @@ class Sale(db.Model):
     # def __repr__(self):
     #     return f'<Customer = {self.name} Invoice = {self.invoice_no} Date = {self.date} >'
     
-    def __init__(self, invoice_no, date,  prem_disc_percentage, entity_id, notes="N/A"):
-        self.invoice_no,self.date, self.prem_disc_percentage, self.entity_id, self.notes = (invoice_no, date, prem_disc_percentage, entity_id, notes)
+    def __init__(self, invoice_no, date, entity_id, notes="N/A"):
+        self.invoice_no,self.date, self.entity_id, self.notes = (invoice_no, date, entity_id, notes)
     
-    def get_cogs_sum(self):
-        """internal - returns cog sum of all cart items from given sale"""
+    # def get_cogs_sum(self):
+    #     """internal - returns cog sum of all cart items from given sale"""
         
-        cog_sum = 0
-        for item in self.items:
-            cog_sum += item.cogs
+    #     cog_sum = 0
+    #     for item in self.items:
+    #         cog_sum += item.cogs
         
-        return cog_sum 
+    #     return cog_sum 
     
-    def get_subtotal_sum(self):
-        """external - sum of all item total"""
+    # def get_subtotal_sum(self):
+    #     """external - sum of all item total"""
         
-        sub_sum = 0
-        for item in self.items:
-            sub_sum += item.subtotal
+    #     sub_sum = 0
+    #     for item in self.items:
+    #         sub_sum += item.subtotal
         
-        return sub_sum
+    #     return sub_sum
             
-    def get_receipt_total(self):
-        """internal - return total receipt amount to be charged to client"""
+    # def get_receipt_total(self):
+    #     """internal - return total receipt amount to be charged to client"""
         
-        return self.get_subtotal_sum() + self.wiring_fee      
+    #     return self.get_subtotal_sum() + self.wiring_fee      
     
 class Item(db.Model):
     

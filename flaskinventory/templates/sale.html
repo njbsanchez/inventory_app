@@ -19,7 +19,7 @@
 	</div>
 
 	<div class="container">
-		<h1 style="text-align:center"><b>All Sale Transactions</h1>
+		<h1 style="text-align:center"><b>All Sale Transactions</b></h1>
 		<div style="text-align:center">
 			<button
 				type="button"
@@ -63,38 +63,13 @@
 						role="form"
 					>
 						<div class="container-fluid">
-							<h2 class="form-addEntity-heading">Add Sale</h2>
-							{{ form.hidden_tag() }} {{ wtf.form_errors(form, hiddens="only")
-							}} {{ wtf.form_field(form.invoice_no) }} {{
-							wtf.form_field(form.date)}}
-							<div class="form-group required p-2">
-								<label class="control-label" for="premdisc"
-									>Select Premium or Discount Rate
-								</label>
-								<p></p>
-								{{ form.prem_disc}}
-								<p></p>
-							</div>
-							{{wtf.form_field(form.wiring_fee) }}
+							{{ form.hidden_tag() }} {{ wtf.form_errors(form, hiddens="only") }} 
+							{{ wtf.form_field(form.invoice_no) }} 
+							{{ wtf.form_field(form.date) }}
 							<div class="form-group required p-2">
 								<label class="control-label" for="entity">Customer Name</label>
 								<p></p>
 								{{ form.entity }}
-								<p></p>
-							</div>
-							<div class="form-group required p-2">
-								<label class="control-label" for="staff">Seller/Staff</label>
-								<p></p>
-								{{ form.staff_id }}
-								<p></p>
-							</div>
-							{{ wtf.form_field(form.broker_fee) }}
-							<div class="form-group required">
-								<label class="control-label" for="staff"
-									>Has Broker Fee been paid out?</label
-								>
-								<p></p>
-								{{ form.broker_fee_paid }}
 								<p></p>
 							</div>
 							{{ wtf.form_field(form.notes) }}
@@ -121,7 +96,6 @@
 					<th>Date</th>
 					<th>Invoice</th>
 					<th>Customer</th>
-					<th>Seller</th>
 					<th>Sale Receipt</th>
 					<th>Actions</th>
 				</tr>
@@ -132,8 +106,7 @@
 					<td>{{ p.date}}</td>
 					<td>{{ p.invoice_no}}</td>
 					<td>{{ p.entity.contact_name}}</td>
-					<td>{{ p.staff.staff_name}}</td>
-					<td>${{ p.get_receipt_total() }}</td>
+					<td>$ [change this to sale receipt] </td>
 					<td>
 						<a href="/sale/{{ p.id }}" class="btn btn-primary">Details</a>
 						<a href="#" style="background-color:red;" class="btn btn-primary">Delete</a>

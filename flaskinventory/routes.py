@@ -311,7 +311,7 @@ def show_staff():
 def show_customers():
     """list staff/add staff."""
     form = AddEntity()
-    details = Entity.query.filter(Entity.entity_role == "customer").all()
+    details = Entity.query.filter(Entity.entity_role=="customer").all()
     exists = bool(Entity.query.all())
 
     if exists == False and request.method == 'GET':
@@ -319,11 +319,9 @@ def show_customers():
 
     if form.validate_on_submit():
 
-
         new_entity = Entity(contact_name=form.contact_name.data,
-                            entity_role=form.entity_role.data,
                             company_name=form.company_name.data,
-                            entity_type=form.entity_type.data,
+                            entity_role="customer",
                             email=form.email.data,
                             phone=form.phone.data,
                             notes=form.notes.data)
@@ -335,7 +333,7 @@ def show_customers():
             db.session.commit()
             print('added!')
             flash(f'Entity has been added!', 'success')
-            return redirect(url_for('show_customers'))
+            return redirect(url_for('show_customer_record', entity_id=new_entity.id))
         except sq.IntegrityError:
             db.session.rollback()
             flash(f'This staff member already exists.', 'danger')
@@ -369,9 +367,8 @@ def show_vendors():
 
 
         new_entity = Entity(contact_name=form.contact_name.data,
-                            entity_role=form.entity_role.data,
                             company_name=form.company_name.data,
-                            entity_type=form.entity_type.data,
+                            entity_role="vendor",
                             email=form.email.data,
                             phone=form.phone.data,
                             notes=form.notes.data)
@@ -457,8 +454,6 @@ def show_sales():
 
     form.entity.choices = [(entity.id, entity.contact_name)
                                for entity in Entity.query.all()]
-    form.staff_id.choices = [(staff.id, staff.staff_name)
-                               for staff in Staff.query.all()]
 
     if exists == False and request.method == 'GET':
         flash(f'Add sale to view', 'info')
@@ -469,12 +464,7 @@ def show_sales():
         
         new_sale = Sale(  invoice_no=form.invoice_no.data,
                           date=form.date.data,
-                          prem_disc_percentage=form.prem_disc.data,
-                          wiring_fee=form.wiring_fee.data,
                           entity_id=form.entity.data,
-                          staff_id=form.staff_id.data,
-                          broker_fee=form.broker_fee.data,
-                          broker_fee_paid=form.broker_fee_paid.data,
                           notes=form.notes.data
                           )
                           
@@ -498,7 +488,7 @@ def show_sale_record(sale_id):
     sale_instance = Sale.query.filter(Sale.id == sale_id).first()
     
     entity_info = Entity.query.filter(Entity.id==sale_instance.entity_id).first()
-    staff_info = Staff.query.filter(Staff.id==sale_instance.staff_id).first()
+    # staff_info = Staff.query.filter(Staff.id==sale_instance.staff_id).first()
     
     details = Item.query.filter(Item.sale_id == sale_id).all()
     exists = bool(details)
@@ -535,7 +525,7 @@ def show_sale_record(sale_id):
         return redirect(url_for('show_sale_record',sale_id=sale_id))
 
     print (form.errors)
-    return render_template("sale_record.html",details=details, staff_info=staff_info, entity_info=entity_info, sale_instance=sale_instance, form=form, sale_id=sale_id)
+    return render_template("sale_record.html",details=details, entity_info=entity_info, sale_instance=sale_instance, form=form, sale_id=sale_id)
 
 
 @app.route("/sale_all/", methods=['GET'])

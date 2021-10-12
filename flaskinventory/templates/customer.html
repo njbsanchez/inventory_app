@@ -19,21 +19,18 @@
 	</div>
 
 	<div class="container">
-
-
-	<h1>Customers</h1>
-	<div >
-		<h3 style="display: inline-block;margin:0;"> Add customer.</h3>
-		<button type="button" class="btn btn-add" data-toggle="modal" data-target="#exampleModal">
-		<span class="btn-icon-add"><i class="glyphicon glyphicon-plus"></i></span>Add Entity</button>
+		<h1 style="text-align:center"><b>Customers</b></h1>
+		<div style="text-align:center">
+			<button type="button" class="btn btn-add" data-toggle="modal" data-target="#exampleModal">
+			<span class="btn-icon-add"><i class="glyphicon glyphicon-plus"></i></span>Add Customer</button>
 	</div>
 
 	<!-- add Modal code here-->
-	<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="margin-top:150px;">
+	<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="margin-top:10px;">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h3 class="modal-title" id="exampleModalLabel">Add Entity</h3>
+					<h3 class="modal-title" id="exampleModalLabel">Add Customer</h3>
 					<button
 						type="button"
 						class="close"
@@ -45,7 +42,6 @@
 				</div>
 				<form class="form-addentity form form-horizontal" method="post" role="form">
 					<div class="container-fluid">
-					<h2 class="form-addEntity-heading">Add Entity</h2>
 					{{ form.hidden_tag() }}
 					{{ wtf.form_errors(form, hiddens="only") }}
 					{{ wtf.form_field(form.contact_name) }}
@@ -87,7 +83,6 @@
 				<th>Contact Name</th>
 				<th>Company Name</th>
 				<th>Customer Type</th>
-				<th>Contact Info</th>
 				<th>Actions</th>
 			</tr>
 		</thead>
@@ -96,9 +91,8 @@
 			<tr>
 				<td>{{p.id}}</td>
 				<td>{{p.contact_name}}</td>
-				<td>{{p.contact_name}}</td>
+				<td>{{p.company_name}}</td>
 				<td>{{p.entity_type}}</td>
-				<td>{{p.email}} • {{p.phone}}</td>
 				<td>
 					<a href="/customer/{{ p.id }}" class="btn btn-primary">Profile Details</a>
 					<a href="#" style="background-color:red;" class="btn btn-primary">Delete</a>

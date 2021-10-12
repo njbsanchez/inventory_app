@@ -60,14 +60,50 @@ head%}
 			<h2><b>Invoice: {{ sale_instance.invoice_no }}</b></h2>
 			<h4><b>Customer: {{ entity_info.company_name }} - {{ entity_info.contact_name }} </b></h4>
 			<h4>Purchase Date: {{ sale_instance.date }} </h4>
-			<h4>Handler: {{ sale_instance.staff.staff_name }} </h4>
 		</div>
 	</div>
+
+
 	<div class="row row-cols-1 row-cols-md-2 g-4 border-dark">
 		<div class="col-lg-8">
-			<h2>Staff/Seller: {{ staff_info.staff_name }} </h2>
+			<h3 style="padding-left: 20px;">Sale Details</h3>
+			<div class="col-lg-11 mx-5">
+				<div class"container">
+					<table class="table table-borderless" style="width: 100%; border:0; padding-left: 50px;">
+						<colgroup>
+							<col span="1" style="width: 30%;">
+							<col span="1" style="width: 70%;">
+
+						</colgroup>
+
+
+						<tbody>
+							<tr style="border: none;">
+								<td style="background-color: #D3D3D3; font-size:16px; font-weight: bolder;">ID</td>
+								<td style="font-size:16px; font-weight: bolder;">++++</td>
+							</tr>
+							<tr style="border: none;">
+								<td style="background-color: #D3D3D3; font-size:16px; font-weight: bolder;">Intake SKU</td>
+								<td style="font-size:16px; font-weight: bolder;">++++</td>
+							</tr>
+							<tr style="border: none;">
+								<td style="background-color: #D3D3D3; font-size:16px; font-weight: bolder;">Product Description</td>
+								<td style="font-size:16px; font-weight: bolder;">++++</td>
+							</tr>
+							<tr style="border: none;">
+								<td style="background-color: #D3D3D3; font-size:16px; font-weight: bolder;">Type Key</td>
+								<td style="font-size:16px; font-weight: bolder;">++++</td>
+							</tr>
+							<tr style="border: none;">
+								<td style="background-color: #D3D3D3; font-size:16px; font-weight: bolder;">Intake Notes</td>
+								<td style="font-size:16px; font-weight: bolder;">++++</td>
+							</tr>
+						</tbody>
+
+						
+			<h3 style="padding-left: 20px;">Staff/Seller: ++++ </h2>
 			<h2>Notes on Sale:</h2>
-			<p> Discount/Premium Percentage applied to all items: {{ sale_instance.prem_disc_percentage }} %</p>
+			<p> Discount/Premium Percentage applied to all items: ++++ %</p>
 		</div>
 		<div class="customer col-lg-4">
 			<h4>Customer Details</h4>
@@ -178,9 +214,9 @@ head%}
 	</table>
 	<p></p>
 	<p></p>
-	<h2>Item Sub-total: {{ sale_instance.get_subtotal_sum() }}</h2>
-	<h2>Wiring Fee: {{ sale_instance.wiring_fee }}</h2>
-	<h1>Total: {{ sale_instance.get_receipt_total() }} </h1>
+	<h2>Item Sub-total: $[change to subtotal] </h2>
+	<h2>Wiring Fee: calculate wiring fee</h2>
+	<h1>Total: [get receipt total]</h1>
 
 	
 </div>

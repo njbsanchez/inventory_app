@@ -31,7 +31,7 @@ class editstaff(FlaskForm):
     staffsubmit = SubmitField('Save Changes')
 
 class AddEntity(FlaskForm):
-    contact_name = StringField('Entity Name', [validators.DataRequired()])
+    contact_name = StringField('Contact Name', [validators.DataRequired()])
     company_name = StringField('Company Name', [validators.DataRequired()])
     entity_role = SelectField(u'Entity Role', [validators.DataRequired()], choices=[("vendor", 'Vendor'), 
                                                                             ("customer", 'Customer')])
@@ -113,8 +113,7 @@ class additem(FlaskForm):
 class addsale(FlaskForm):
     invoice_no = StringField('Invoice Number', [validators.DataRequired()])
     date = DateField('Sale Date', format='%Y-%m-%d')
-    entity = SelectField('Customer', choices=[], coerce=int, option_widget=None, validate_choice=True)
-    wiring_fee = FloatField('Wiring Fee')    
+    entity = SelectField('Customer', choices=[], coerce=int, option_widget=None, validate_choice=True) 
     notes = TextField('Notes')   
     salesubmit = SubmitField('Proceed to Add Items')
 
