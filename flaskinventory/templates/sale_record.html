@@ -44,7 +44,7 @@ head%}
 
 <div class="container">
 	<h1 class="text-center"><b>Sale Record</b><h1>
-	<h5 class="text-center">Edit Sale Details • Edit Vendor Details</b></h5>
+	<h5 class="text-center">Edit Sale Details • Edit Customer Details</b></h5>
 	<hr/>
 </div>
 
@@ -71,28 +71,28 @@ head%}
 				<div class"container">
 					<table class="table table-borderless" style="width: 100%; border:0; padding-left: 50px;">
 						<colgroup>
-							<col span="1" style="width: 30%;">
-							<col span="1" style="width: 70%;">
+							<col span="1" style="width: 35%;">
+							<col span="1" style="width: 65%;">
 
 						</colgroup>
 
 
 						<tbody>
 							<tr style="border: none;">
-								<td style="background-color: #D3D3D3; font-size:16px; font-weight: bolder;">ID</td>
-								<td style="font-size:16px; font-weight: bolder;">++++</td>
+								<td style="background-color: #D3D3D3; font-size:16px; font-weight: bolder;">Sale Date</td>
+								<td style="font-size:16px; font-weight: bolder;">{{ sale_instance.date }}</td>
 							</tr>
 							<tr style="border: none;">
-								<td style="background-color: #D3D3D3; font-size:16px; font-weight: bolder;">Intake SKU</td>
-								<td style="font-size:16px; font-weight: bolder;">++++</td>
+								<td style="background-color: #D3D3D3; font-size:16px; font-weight: bolder;">Invoice Number</td>
+								<td style="font-size:16px; font-weight: bolder;">{{ sale_instance.invoice_no }}</td>
 							</tr>
 							<tr style="border: none;">
-								<td style="background-color: #D3D3D3; font-size:16px; font-weight: bolder;">Product Description</td>
-								<td style="font-size:16px; font-weight: bolder;">++++</td>
+								<td style="background-color: #D3D3D3; font-size:16px; font-weight: bolder;">Customer Name</td>
+								<td style="font-size:16px; font-weight: bolder;">{{ sale_instance.entity.contact_name }}</td>
 							</tr>
 							<tr style="border: none;">
-								<td style="background-color: #D3D3D3; font-size:16px; font-weight: bolder;">Type Key</td>
-								<td style="font-size:16px; font-weight: bolder;">++++</td>
+								<td style="background-color: #D3D3D3; font-size:16px; font-weight: bolder;">Company</td>
+								<td style="font-size:16px; font-weight: bolder;">{{ sale_instance.entity.company_name }}</td>
 							</tr>
 							<tr style="border: none;">
 								<td style="background-color: #D3D3D3; font-size:16px; font-weight: bolder;">Intake Notes</td>

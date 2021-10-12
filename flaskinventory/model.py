@@ -339,6 +339,7 @@ class Intake(db.Model):
     items = db.relationship("Item", backref='intake_instance')
     sample_items = db.relationship("SampleItem", backref='intake_instance')
     addons = db.relationship("AddOns", backref='intake_instance')
+    brokers = db.relationship ("StaffRelations", backref='intake_instance')
     
     def __repr__(self):
         return f'{self.sku}'
@@ -346,6 +347,12 @@ class Intake(db.Model):
     def __init__(self, date, sku, product_id, type_key, initial_unit_count, cost_per_unit, entity_id, notes="N/A"):
         self.date, self.sku, self.product_id, self.type_key, self.initial_unit_count, self.cost_per_unit, self.entity_id, self.notes = (date, sku, product_id, type_key, initial_unit_count, cost_per_unit, entity_id, notes)
 
+    def calculate_subtotal(self):
+        
+        total = self.cost_per_unit * self.initial_unit_count
+            
+        return total
+    
     def calculate_addon_total(self):
         
         total = 0
@@ -354,16 +361,25 @@ class Intake(db.Model):
             
         return total
     
+    def calculate_brokers_total(self):
+        
+        total = 0
+        for item in self.brokers:
+            total += item.broker_rate
+            
+        return total
+    
     def get_intake_cog(self):
         """Returns intake cog related to SKU"""
         
         addon_total = self.calculate_addon_total()
+        broker_total = self.calculate_brokers_total()
+        sub_total = self.calculate_subtotal()
         
-        total_cog = addon_total + (self.cost_per_unit * self.initial_unit_count)
+        total_cog = addon_total + broker_total + sub_total
         
         return total_cog
     
-
 
 def get_all_products():
     """Returns intake related to SKU"""
@@ -410,28 +426,28 @@ class Sale(db.Model):
     def __init__(self, invoice_no, date, entity_id, notes="N/A"):
         self.invoice_no,self.date, self.entity_id, self.notes = (invoice_no, date, entity_id, notes)
     
-    # def get_cogs_sum(self):
-    #     """internal - returns cog sum of all cart items from given sale"""
+    def get_cogs_sum(self):
+        """internal - returns cog sum of all cart items from given sale"""
         
-    #     cog_sum = 0
-    #     for item in self.items:
-    #         cog_sum += item.cogs
+        cog_sum = 0
+        for item in self.items:
+            cog_sum += item.cogs
         
-    #     return cog_sum 
+        return cog_sum 
     
-    # def get_subtotal_sum(self):
-    #     """external - sum of all item total"""
+    def get_subtotal_sum(self):
+        """external - sum of all item total"""
         
-    #     sub_sum = 0
-    #     for item in self.items:
-    #         sub_sum += item.subtotal
+        sub_sum = 0
+        for item in self.items:
+            sub_sum += item.subtotal
         
-    #     return sub_sum
+        return sub_sum
             
-    # def get_receipt_total(self):
-    #     """internal - return total receipt amount to be charged to client"""
+    def get_receipt_total(self):
+        """internal - return total receipt amount to be charged to client"""
         
-    #     return self.get_subtotal_sum() + self.wiring_fee      
+        return self.get_subtotal_sum() + self.wiring_fee      
     
 class Item(db.Model):
     
@@ -575,13 +591,21 @@ class StaffRelations(db.Model):
     payment = db.relationship("Payment", backref='staff_relations')
     intake = db.relationship("Intake", backref='staff_relations')
     
-    
     def __repr__(self):
         return f'SKU { self.id } ({ self.staff })'
 
     def __init__(self, staff_id, broker_rate, broker_fee_paid, intake_id=None, sale_id=None, sample_id=None, payment_id=None, notes="N/A"):
         self.staff_id, self.broker_rate, self.broker_fee_paid, self.intake_id, self.sale_id, self.sample_id, self.payment_id, self.notes = (staff_id, broker_rate, broker_fee_paid, intake_id, sale_id, sample_id, payment_id, notes)
     
+    # def calculate_broker_subtotal(self):
+    #     if self.intake_id:
+    #         broker_subtotal = self.broker_rate * self.intake.initial_unit_count
+    #         return broker_subtotal
+    #     elif self.sale_id:
+    #         broker_subtotal = self.broker_rate * self.sale.initial_unit_count
+    #         return broker_subtotal
+
+            
 class StaffInvolvement(db.Model):  
     
     #Item info
